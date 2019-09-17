@@ -1,15 +1,36 @@
 // In App.js in a new project
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { Divider } from 'react-native-elements';
 import TopTemplate from './TopTemplate';
+import axios from 'axios';
+import { SQLite } from "expo";
+
+//const db = SQLite.openDatabase('database.db');
 
 export default class WalletScreen extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            id_chofer: 1,
+            tarjeta_gan: 0,
+            efectivo_gan: 0,
+            externo_gan: 0,
+            total_gan: 0,
+            total_gan_dia: 0,
+            cuota_plat: 0,
+            cuota_socio: 0,
+            rango_fechas: '',
+            cant_servicios: 0,
+            fecha_actual: '',
+            tiempo_segundos: 0,
+            tiempo_minutos: 55,
+            tiempo_horas: 10,
+            switchValue: true,
+            connListItems: []
+        };
     }
 
     test = () => {
@@ -20,12 +41,162 @@ export default class WalletScreen extends React.Component {
         title: 'Mi Billetera'
     };
 
+    getMonth = (mes) => {
+        switch (mes) {
+            case '01':
+                return 'ene';
+            case '02':
+                return 'feb';
+            case '03':
+                return 'mar';
+            case '04':
+                return 'abr';
+            case '05':
+                return 'may';
+            case '06':
+                return 'jun';
+            case '07':
+                return 'jul';
+            case '08':
+                return 'ago';
+            case '09':
+                return 'sep';
+            case '10':
+                return 'oct';
+            case '11':
+                return 'nov';
+            case '12':
+                return 'dic';
+        }
+    }
+
+    getCentavos = (numberValue) => {
+        numberValue = numberValue.toString();
+        let split_numberValue = numberValue.split('.');
+
+        if(split_numberValue.length > 1){
+            outValue = numberValue + '0';
+        }else{
+            outValue = numberValue + '.00';
+        }
+        return outValue;
+    }
+
+    async componentDidMount(){
+        //console.log(TopTemplate.props.switchValue);
+        //console.log(db);
+        try{
+            //console.log(this.props.switchValue);
+            const res = await axios.post('http://192.168.1.74:3000/webservice/interfaz75/billetera', {
+                id_chofer: this.state.id_chofer
+            });
+
+            // handle success
+            const fechas_first = res.data.datos[0].rango_fechas;
+            let split_fechas = fechas_first.split('-');
+            let primer_mes = split_fechas[1];
+            let primer_dia = split_fechas[2];
+            let segundo_mes = split_fechas[4];
+            let segundo_dia = split_fechas[5];
+
+            primer_mes = this.getMonth(primer_mes);
+            segundo_mes = this.getMonth(segundo_mes);
+
+            const fechas = primer_dia + " de " + primer_mes + " - " + segundo_dia + " de " + segundo_mes;
+
+            let tarjeta_gan = res.data.datos[0].tarjeta_gan;
+            tarjeta_gan = this.getCentavos(tarjeta_gan);
+
+            let efectivo_gan = res.data.datos[0].efectivo_gan;
+            efectivo_gan = this.getCentavos(efectivo_gan);
+
+            let externo_gan = res.data.datos[0].externo_gan;
+            externo_gan = this.getCentavos(externo_gan);
+
+            let total_gan = res.data.datos[0].total_gan;
+            total_gan = this.getCentavos(total_gan);
+
+            let total_gan_dia = res.data.datos[0].total_gan_dia;
+            total_gan_dia = this.getCentavos(total_gan_dia);
+
+            let cuota_plat = res.data.datos[0].cuota_plat;
+            cuota_plat = this.getCentavos(cuota_plat);
+
+            let cuota_socio = res.data.datos[0].cuota_socio;
+            cuota_socio = this.getCentavos(cuota_socio);
+
+            let cant_servicios = res.data.datos[0].cant_servicios;
+
+            let date = new Date();
+            let fecha = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+
+            this.setState({
+                tarjeta_gan: tarjeta_gan,
+                efectivo_gan: efectivo_gan,
+                externo_gan: externo_gan,
+                total_gan: total_gan,
+                total_gan_dia: total_gan_dia,
+                cuota_plat: cuota_plat,
+                cuota_socio: cuota_socio,
+                rango_fechas: fechas,
+                cant_servicios: cant_servicios,
+                fecha_actual: fecha
+            });
+        }catch(e){
+            alert("No hay conexión al web service", "Error");
+        }
+    }
+
     render() {
         return (
             <View>
                 <ScrollView style={{marginBottom: 75}}>
 
-                    <TopTemplate></TopTemplate>
+                    <Divider style={styles.row}></Divider>
+
+                    <View style={{
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexDirection: 'row',
+                        height: 60
+                    }}>
+                        <View style={{
+                            flexDirection: 'row',
+                            alignItems: 'center'
+                        }}>
+                            <Switch value={this.state.switchValue} onValueChange={(switchValue) => this.setState({ switchValue })} />
+                            <Text style={{ fontSize: 20 }}>{this.state.switchValue ? 'Conectado' : 'Desconectado'}</Text>
+                        </View>
+                        <View style={{
+                            flexDirection: 'row',
+                            alignItems: 'center'
+                        }}>
+                            <Icon
+                                name='exclamation-circle'
+                                size={40}
+                                onPress={this.test}
+                                style={{
+                                    marginRight: 5
+                                }}
+                            />
+                            <Icon
+                                name='question-circle'
+                                size={40}
+                                onPress={this.test}
+                                style={{
+                                    marginRight: 5
+                                }}
+                            />
+                            <Icon
+                                name='cog'
+                                size={40}
+                                onPress={this.test}
+                                style={{
+                                    marginRight: 20
+                                }}
+                            />
+                        </View>
+                    </View>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate("Earning")}>
                         <View
                             style={{
@@ -38,8 +209,8 @@ export default class WalletScreen extends React.Component {
 
                             <View style={{ alignItems: 'center', justifyContent: 'flex-end' }}>
                                 <Text style={{ fontSize: 15 }}>Ganancias de esta semana</Text>
-                                <Text style={{ fontSize: 10 }}>27 de ago - 1 de sep</Text>
-                                <Text style={{ fontSize: 20 }}>$5100.00 MXN</Text>
+                                <Text style={{ fontSize: 10 }}>{this.state.rango_fechas}</Text>
+                                <Text style={{ fontSize: 20 }}>${this.state.total_gan} MXN</Text>
                             </View>
 
                             <View style={{
@@ -76,7 +247,7 @@ export default class WalletScreen extends React.Component {
                             <View style={{
                                 flexDirection: 'row'
                             }}>
-                                <Text style={{ fontSize: 15 }}>$4000.00 MXN</Text>
+                                <Text style={{ fontSize: 15 }}>${this.state.tarjeta_gan} MXN</Text>
                                 <Icon
                                     name='chevron-right'
                                     size={15}
@@ -104,7 +275,7 @@ export default class WalletScreen extends React.Component {
                         <View style={{
                             flexDirection: 'row'
                         }}>
-                            <Text style={{ fontSize: 15 }}>$1000.00 MXN</Text>
+                            <Text style={{ fontSize: 15 }}>${this.state.efectivo_gan} MXN</Text>
                         </View>
 
                     </View>
@@ -126,7 +297,7 @@ export default class WalletScreen extends React.Component {
                         <View style={{
                             flexDirection: 'row'
                         }}>
-                            <Text style={{ fontSize: 15 }}>$100.00 MXN</Text>
+                            <Text style={{ fontSize: 15 }}>${this.state.externo_gan} MXN</Text>
                         </View>
 
                     </View>
@@ -168,7 +339,7 @@ export default class WalletScreen extends React.Component {
                     }}>
 
                         <View>
-                            <Text>27/08/2019</Text>
+                            <Text>{this.state.fecha_actual}</Text>
                         </View>
 
                     </View>
@@ -188,7 +359,7 @@ export default class WalletScreen extends React.Component {
                             marginLeft: 40,
                             width: 200
                         }}>
-                            <Text>2</Text>
+                            <Text>{this.state.cant_servicios}</Text>
                             <Text>Viajes</Text>
                         </View>
 
@@ -198,8 +369,8 @@ export default class WalletScreen extends React.Component {
                             marginRight: 80,
                             width: 200
                         }}>
-                            <Text>10:55</Text>
-                            <Text>Tiempo conectados</Text>
+                            <Text>{this.state.tiempo_horas}:{this.state.tiempo_minutos}</Text>
+                            <Text>Tiempo conectado</Text>
                         </View>
 
                     </View>
@@ -219,7 +390,7 @@ export default class WalletScreen extends React.Component {
                         </View>
 
                         <View>
-                            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>$155 MXN</Text>
+                            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>${this.state.total_gan_dia} MXN</Text>
                         </View>
 
                     </View>
@@ -254,7 +425,7 @@ export default class WalletScreen extends React.Component {
                             marginLeft: 40,
                             width: 200
                         }}>
-                            <Text>$20.00 MXN</Text>
+                            <Text>${this.state.cuota_plat} MXN</Text>
                             <Text>Cuota de servicio MiGo</Text>
                         </View>
 
@@ -264,7 +435,7 @@ export default class WalletScreen extends React.Component {
                             marginRight: 80,
                             width: 200
                         }}>
-                            <Text>$15.00 MXN</Text>
+                            <Text>${this.state.cuota_socio} MXN</Text>
                             <Text>Cuota de socio</Text>
                         </View>
 

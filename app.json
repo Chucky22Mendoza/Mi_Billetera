@@ -27,7 +27,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.loginlock.mi_billetera"
+      "package": "com.kiotrack.mi_billetera"
     }
   }
 }

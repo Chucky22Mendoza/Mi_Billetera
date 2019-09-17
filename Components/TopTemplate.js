@@ -6,7 +6,9 @@ import { Divider } from 'react-native-elements';
 export default class ExtraTemplate extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            switchValue: true
+        };
     }
 
     test = () => {
@@ -29,8 +31,8 @@ export default class ExtraTemplate extends React.Component {
                         flexDirection: 'row',
                         alignItems: 'center'
                     }}>
-                        <Switch></Switch>
-                        <Text style={{fontSize:20}}>Conectado</Text>
+                        <Switch value={ this.state.switchValue } onValueChange={( switchValue ) => this.setState({ switchValue })}/>
+                        <Text style={{fontSize:20}}>{ this.state.switchValue ? 'Conectado' : 'Desconectado' }</Text>
                     </View>
                     <View style={{
                         flexDirection: 'row',
