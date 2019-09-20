@@ -10,14 +10,14 @@ import { createStackNavigator } from "react-navigation-stack";
 import { createDrawerNavigator } from "react-navigation-drawer";
 
 import WalletScreen from './Components/My_Wallet';
-import BalanceScreen from './Components/Balance'
+import CardScreen from './Components/Card'
 import EarningScreen from './Components/Earnings';
 import TravelScreen from './Components/Travels';
 import ReferScreen from './Components/Refer';
 
 const MainStack = createStackNavigator({
   Wallet : { screen: WalletScreen },
-  Balance : { screen: BalanceScreen },
+  Card : { screen: CardScreen },
   Earning : { screen: EarningScreen },
   Travel : { screen: TravelScreen },
   Refer : { screen: ReferScreen },

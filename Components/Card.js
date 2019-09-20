@@ -6,7 +6,7 @@ import TopTemplate from './TopTemplate';
 import TotalBalanceScreen from './TotalBalance';
 import EarningBalanceScreen from './EarningBalance'
 
-export default class BalanceScreen extends React.Component {
+export default class CardScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {

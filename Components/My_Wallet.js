@@ -3,6 +3,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { Row } from 'react-native-table-component';
 import { Divider } from 'react-native-elements';
 import TopTemplate from './TopTemplate';
 import axios from 'axios';
@@ -20,8 +21,8 @@ export default class WalletScreen extends React.Component {
             externo_gan: 0,
             total_gan: 0,
             total_gan_dia: 0,
-            cuota_plat: 0,
-            cuota_socio: 0,
+            cuota_plat_r: 0,
+            cuota_socio_r: 0,
             rango_fechas: '',
             cant_servicios: 0,
             fecha_actual: '',
@@ -29,7 +30,13 @@ export default class WalletScreen extends React.Component {
             tiempo_minutos: 55,
             tiempo_horas: 10,
             switchValue: true,
-            connListItems: []
+            connListItems: [],
+            tableData_1: [
+                [2, '10:55']
+            ],
+            tableData_1: [
+                ['Viajes', 'Tiempo conectado']
+            ]
         };
     }
 
@@ -87,9 +94,11 @@ export default class WalletScreen extends React.Component {
         //console.log(db);
         try{
             //console.log(this.props.switchValue);
-            const res = await axios.post('http://192.168.1.74:3000/webservice/interfaz75/billetera', {
+            const res = await axios.post('http://187.234.45.213:3001/webservice/interfaz75/billetera', {
                 id_chofer: this.state.id_chofer
             });
+
+            //console.log(res);
 
             // handle success
             const fechas_first = res.data.datos[0].rango_fechas;
@@ -119,11 +128,11 @@ export default class WalletScreen extends React.Component {
             let total_gan_dia = res.data.datos[0].total_gan_dia;
             total_gan_dia = this.getCentavos(total_gan_dia);
 
-            let cuota_plat = res.data.datos[0].cuota_plat;
-            cuota_plat = this.getCentavos(cuota_plat);
+            let cuota_plat_r = res.data.datos[0].cuota_plat_r;
+            cuota_plat = this.getCentavos(cuota_plat_r);
 
-            let cuota_socio = res.data.datos[0].cuota_socio;
-            cuota_socio = this.getCentavos(cuota_socio);
+            let cuota_socio_r = res.data.datos[0].cuota_socio_r;
+            cuota_socio_r = this.getCentavos(cuota_socio_r);
 
             let cant_servicios = res.data.datos[0].cant_servicios;
 
@@ -136,13 +145,14 @@ export default class WalletScreen extends React.Component {
                 externo_gan: externo_gan,
                 total_gan: total_gan,
                 total_gan_dia: total_gan_dia,
-                cuota_plat: cuota_plat,
-                cuota_socio: cuota_socio,
+                cuota_plat: cuota_plat_r,
+                cuota_socio: cuota_socio_r,
                 rango_fechas: fechas,
                 cant_servicios: cant_servicios,
                 fecha_actual: fecha
             });
         }catch(e){
+            console.log(e);
             alert("No hay conexión al web service", "Error");
         }
     }
@@ -231,7 +241,7 @@ export default class WalletScreen extends React.Component {
 
                     <Divider style={styles.row}></Divider>
 
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate("Balance")}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate("Card")}>
                         <View style={{
                             height: 25,
                             alignItems: 'center',
@@ -241,7 +251,7 @@ export default class WalletScreen extends React.Component {
                         }}>
 
                             <View>
-                                <Text style={{ fontSize: 15 }}>Balance</Text>
+                                <Text style={{ fontSize: 15 }}>Tarjeta</Text>
                             </View>
 
                             <View style={{
@@ -298,6 +308,50 @@ export default class WalletScreen extends React.Component {
                             flexDirection: 'row'
                         }}>
                             <Text style={{ fontSize: 15 }}>${this.state.externo_gan} MXN</Text>
+                        </View>
+
+                    </View>
+
+                    <Divider style={styles.row}></Divider>
+
+                    <View style={{
+                        height: 25,
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexDirection: 'row',
+                        padding: 5
+                    }}>
+
+                        <View>
+                            <Text style={{ fontSize: 15 }}>Comisión plataforma</Text>
+                        </View>
+
+                        <View style={{
+                            flexDirection: 'row'
+                        }}>
+                            <Text style={{ fontSize: 15 }}>${this.state.cuota_plat_r} MXN</Text>
+                        </View>
+
+                    </View>
+
+                    <Divider style={styles.row}></Divider>
+
+                    <View style={{
+                        height: 25,
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexDirection: 'row',
+                        padding: 5
+                    }}>
+
+                        <View>
+                            <Text style={{ fontSize: 15 }}>Comisión socio</Text>
+                        </View>
+
+                        <View style={{
+                            flexDirection: 'row'
+                        }}>
+                            <Text style={{ fontSize: 15 }}>${this.state.cuota_socio_r} MXN</Text>
                         </View>
 
                     </View>
@@ -373,6 +427,10 @@ export default class WalletScreen extends React.Component {
                             <Text>Tiempo conectado</Text>
                         </View>
 
+                    </View>
+                    <View>
+                        <Row data={this.state.tableData_1} textStyle={styles.text} />
+                        <Row data={this.state.tableData_2} textStyle={styles.text} />
                     </View>
 
                     <Divider style={styles.row}></Divider>
@@ -467,6 +525,8 @@ export default class WalletScreen extends React.Component {
                     </TouchableOpacity>
 
                     <Divider style={styles.row}></Divider>
+                    <Divider style={styles.row}></Divider>
+                    <Divider style={styles.row}></Divider>
 
                 </ScrollView>
 
@@ -540,5 +600,13 @@ const styles = StyleSheet.create({
     row: {
         height: 5,
         backgroundColor: "#f0f4f7"
+    },
+    head: {
+        height: 40,
+        backgroundColor: '#f1f8ff'
+    },
+    text: {
+        fontSize: 12,
+        margin: 2
     }
 });
