@@ -13,8 +13,10 @@ export default class CardScreen extends React.Component {
             total: true,
             earnings: false,
             backgroundColorTotal: 'green',
-            backgroundColorEarning: '#DDDDDD'
+            backgroundColorEarning: '#DDDDDD',
+            cardTotalPrincipal: this.props.navigation.state.params.tarjeta_gan
         };
+        console.log(this.props.navigation.state.params.tarjeta_gan);
     }
 
     test = () => {
@@ -22,7 +24,7 @@ export default class CardScreen extends React.Component {
     };
 
     static navigationOptions = {
-        title: 'Balance'
+        title: 'Tarjeta'
     };
 
     changeToTotal = () => {
@@ -65,8 +67,8 @@ export default class CardScreen extends React.Component {
                     }}>
 
                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ fontSize: 20 }}>$4000.00 MXN</Text>
-                            <Text style={{ fontSize: 15 }}>Puedes retirar $4000 MXN</Text>
+                            <Text style={{ fontSize: 20 }}>${this.state.cardTotalPrincipal} MXN</Text>
+                            <Text style={{ fontSize: 15 }}>Puedes retirar ${this.state.cardTotalPrincipal} MXN</Text>
                             <Text style={{ fontSize: 15 }}>este próximo lunes</Text>
                         </View>
 

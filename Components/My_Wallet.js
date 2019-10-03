@@ -1,13 +1,15 @@
 // In App.js in a new project
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, Alert } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { Row } from 'react-native-table-component';
+import { Table, Row } from 'react-native-table-component';
 import { Divider } from 'react-native-elements';
 import TopTemplate from './TopTemplate';
 import axios from 'axios';
 import { SQLite } from "expo";
+//const aes256 = require('aes256');
+//var key = "92AE31A79FEEB2A3";
 
 //const db = SQLite.openDatabase('database.db');
 
@@ -23,8 +25,11 @@ export default class WalletScreen extends React.Component {
             total_gan_dia: 0,
             cuota_plat_r: 0,
             cuota_socio_r: 0,
-            rango_fechas: '',
+            rango_fechas: '00/00 - 00/00',
             cant_servicios: 0,
+            ganancia_final: 0,
+            out_adeudo_plataforma_efec: 0,
+            out_adeudo_socio_efec: 0,
             fecha_actual: '',
             tiempo_segundos: 0,
             tiempo_minutos: 55,
@@ -34,7 +39,7 @@ export default class WalletScreen extends React.Component {
             tableData_1: [
                 [2, '10:55']
             ],
-            tableData_1: [
+            tableData_2: [
                 ['Viajes', 'Tiempo conectado']
             ]
         };
@@ -48,96 +53,49 @@ export default class WalletScreen extends React.Component {
         title: 'Mi Billetera'
     };
 
-    getMonth = (mes) => {
-        switch (mes) {
-            case '01':
-                return 'ene';
-            case '02':
-                return 'feb';
-            case '03':
-                return 'mar';
-            case '04':
-                return 'abr';
-            case '05':
-                return 'may';
-            case '06':
-                return 'jun';
-            case '07':
-                return 'jul';
-            case '08':
-                return 'ago';
-            case '09':
-                return 'sep';
-            case '10':
-                return 'oct';
-            case '11':
-                return 'nov';
-            case '12':
-                return 'dic';
-        }
-    }
-
-    getCentavos = (numberValue) => {
-        numberValue = numberValue.toString();
-        let split_numberValue = numberValue.split('.');
-
-        if(split_numberValue.length > 1){
-            outValue = numberValue + '0';
-        }else{
-            outValue = numberValue + '.00';
-        }
-        return outValue;
-    }
 
     async componentDidMount(){
-        //console.log(TopTemplate.props.switchValue);
-        //console.log(db);
+        let date, fecha;
+        date = new Date();
+        fecha = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+        this.setState({
+            fecha_actual: fecha
+        });
         try{
-            //console.log(this.props.switchValue);
-            const res = await axios.post('http://187.234.45.213:3001/webservice/interfaz75/billetera', {
+            const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_75/billetera', {
                 id_chofer: this.state.id_chofer
             });
 
-            //console.log(res);
-
             // handle success
-            const fechas_first = res.data.datos[0].rango_fechas;
-            let split_fechas = fechas_first.split('-');
-            let primer_mes = split_fechas[1];
-            let primer_dia = split_fechas[2];
-            let segundo_mes = split_fechas[4];
-            let segundo_dia = split_fechas[5];
+            let rango_fechas, tarjeta_gan, efectivo_gan, externo_gan, total_gan, total_gan_dia, cuota_plat_r, cuota_socio_r, cant_servicios;
 
-            primer_mes = this.getMonth(primer_mes);
-            segundo_mes = this.getMonth(segundo_mes);
-
-            const fechas = primer_dia + " de " + primer_mes + " - " + segundo_dia + " de " + segundo_mes;
-
-            let tarjeta_gan = res.data.datos[0].tarjeta_gan;
-            tarjeta_gan = this.getCentavos(tarjeta_gan);
-
-            let efectivo_gan = res.data.datos[0].efectivo_gan;
-            efectivo_gan = this.getCentavos(efectivo_gan);
-
-            let externo_gan = res.data.datos[0].externo_gan;
-            externo_gan = this.getCentavos(externo_gan);
-
-            let total_gan = res.data.datos[0].total_gan;
-            total_gan = this.getCentavos(total_gan);
-
-            let total_gan_dia = res.data.datos[0].total_gan_dia;
-            total_gan_dia = this.getCentavos(total_gan_dia);
-
-            let cuota_plat_r = res.data.datos[0].cuota_plat_r;
-            cuota_plat = this.getCentavos(cuota_plat_r);
-
-            let cuota_socio_r = res.data.datos[0].cuota_socio_r;
-            cuota_socio_r = this.getCentavos(cuota_socio_r);
-
-            let cant_servicios = res.data.datos[0].cant_servicios;
-
-            let date = new Date();
-            let fecha = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+            if(res.data.datos[0].encrypt){
+                tarjeta_gan = aes256.decrypt(res.data.datos[0].tarjeta_gan);
+                efectivo_gan = aes256.decrypt(res.data.datos[0].efectivo_gan);
+                externo_gan = aes256.decrypt(res.data.datos[0].externo_gan);
+                total_gan = aes256.decrypt(res.data.datos[0].total_gan);
+                total_gan_dia = aes256.decrypt(res.data.datos[0].total_gan_dia);
+                cuota_plat_r = aes256.decrypt(res.data.datos[0].cuota_plat_r);
+                cuota_socio_r = aes256.decrypt(res.data.datos[0].cuota_socio_r);
+                rango_fechas = aes256.decrypt(key, res.data.datos[0].rango_fechas);
+                cant_servicios = aes256.decrypt(res.data.datos[0].cant_servicios);
+                ganancia_final = aes256.decrypt(res.data.datos[0].ganancia_final);
+                out_adeudo_plataforma_efec = aes256.decrypt(res.data.datos[0].out_adeudo_plataforma_efec);
+                out_adeudo_socio_efec = aes256.decrypt(res.data.datos[0].out_adeudo_socio_efec);
+            }else{
+                rango_fechas = res.data.datos[0].rango_fechas;
+                tarjeta_gan = res.data.datos[0].tarjeta_gan;
+                efectivo_gan = res.data.datos[0].efectivo_gan;
+                externo_gan = res.data.datos[0].externo_gan;
+                total_gan = res.data.datos[0].total_gan;
+                total_gan_dia = res.data.datos[0].total_gan_dia;
+                cuota_plat_r = res.data.datos[0].cuota_plat_r;
+                cuota_socio_r = res.data.datos[0].cuota_socio_r;
+                cant_servicios = res.data.datos[0].cant_servicios;
+                ganancia_final = res.data.datos[0].ganancia_final;
+                out_adeudo_plataforma_efec = res.data.datos[0].out_adeudo_plataforma_efec;
+                out_adeudo_socio_efec = res.data.datos[0].out_adeudo_socio_efec;
+            }
 
             this.setState({
                 tarjeta_gan: tarjeta_gan,
@@ -147,9 +105,11 @@ export default class WalletScreen extends React.Component {
                 total_gan_dia: total_gan_dia,
                 cuota_plat: cuota_plat_r,
                 cuota_socio: cuota_socio_r,
-                rango_fechas: fechas,
+                rango_fechas: rango_fechas,
                 cant_servicios: cant_servicios,
-                fecha_actual: fecha
+                ganancia_final: ganancia_final,
+                out_adeudo_plataforma_efec: out_adeudo_plataforma_efec,
+                out_adeudo_socio_efec: out_adeudo_socio_efec
             });
         }catch(e){
             console.log(e);
@@ -207,7 +167,7 @@ export default class WalletScreen extends React.Component {
                             />
                         </View>
                     </View>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate("Earning")}>
+                    <TouchableOpacity onPress={() => this.state.total_gan != 0 ? this.props.navigation.navigate("Earning", { total_gan: this.state.total_gan }) : Alert('Esperando al servidor', 'Wait')}>
                         <View
                             style={{
                                 height: 70,
@@ -241,7 +201,7 @@ export default class WalletScreen extends React.Component {
 
                     <Divider style={styles.row}></Divider>
 
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate("Card")}>
+                    <TouchableOpacity onPress={() => this.state.tarjeta_gan != 0 ? this.props.navigation.navigate("Card", { tarjeta_gan: this.state.tarjeta_gan }) : Alert('Esperando al servidor', 'Wait')}>
                         <View style={{
                             height: 25,
                             alignItems: 'center',
@@ -428,10 +388,6 @@ export default class WalletScreen extends React.Component {
                         </View>
 
                     </View>
-                    <View>
-                        <Row data={this.state.tableData_1} textStyle={styles.text} />
-                        <Row data={this.state.tableData_2} textStyle={styles.text} />
-                    </View>
 
                     <Divider style={styles.row}></Divider>
 
@@ -483,7 +439,7 @@ export default class WalletScreen extends React.Component {
                             marginLeft: 40,
                             width: 200
                         }}>
-                            <Text>${this.state.cuota_plat} MXN</Text>
+                            <Text>${this.state.out_adeudo_plataforma_efec} MXN</Text>
                             <Text>Cuota de servicio MiGo</Text>
                         </View>
 
@@ -493,7 +449,7 @@ export default class WalletScreen extends React.Component {
                             marginRight: 80,
                             width: 200
                         }}>
-                            <Text>${this.state.cuota_socio} MXN</Text>
+                            <Text>${this.state.out_adeudo_socio_efec} MXN</Text>
                             <Text>Cuota de socio</Text>
                         </View>
 
@@ -601,12 +557,4 @@ const styles = StyleSheet.create({
         height: 5,
         backgroundColor: "#f0f4f7"
     },
-    head: {
-        height: 40,
-        backgroundColor: '#f1f8ff'
-    },
-    text: {
-        fontSize: 12,
-        margin: 2
-    }
 });

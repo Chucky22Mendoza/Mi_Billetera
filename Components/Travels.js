@@ -7,7 +7,6 @@ import { Divider } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import TopTemplate from './TopTemplate';
 import axios from 'axios';
-import { Row, Table, Rows } from 'react-native-table-component';
 
 export default class TravelScreen extends React.Component {
     constructor(props) {
@@ -17,9 +16,7 @@ export default class TravelScreen extends React.Component {
             objTravels: [],
             obj_aux_final: [],
             obj_items: [],
-            tableHead: ['Fecha/Hora', 'Ganancia MXN', 'Extra MXN'],
-            validateWS: false,
-            displayAddr: false
+            validateWS: false
         };
     }
 
@@ -34,7 +31,7 @@ export default class TravelScreen extends React.Component {
     async componentDidMount(){
         try{
 
-            const res = await axios.post('http://187.234.45.213:3001/webservice/interfaz81/verviajes', {
+            const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_81/verviajes', {
                 id_chofer: this.state.id_chofer
             });
             const obj = res.data.datos;
@@ -46,7 +43,7 @@ export default class TravelScreen extends React.Component {
             alert("No hay conexión al web service", "Error");
             this.setState({
                 validateWS: false
-            })
+            });
         }
         this.objToTravels();
     }
@@ -54,34 +51,24 @@ export default class TravelScreen extends React.Component {
     objToTravels = () => {
         const travels = this.state.objTravels;
         const obj_aux = [];
-        let i = 0;
+
         travels.forEach(travel => {
-            i++;
-            const fech_aux = travel.out_fecha;
-            const fech_split = fech_aux.split("T");
-            const fecha_completa = fech_split[0];
-            const hora_completa = fech_split[1];
-            const fecha_completa_split = fecha_completa.split("-");
-            const fecha_final = fecha_completa_split[2] + "/" + fecha_completa_split[1];
-            const hora_completa_split = hora_completa.split(":");
-            const hora_final = hora_completa_split[0] + ":" + hora_completa_split[1];
-
-            travel.out_fecha = fecha_final;
-            travel.out_hora = hora_final;
-            travel.id = i;
-
-            if(travel.out_total == null){
-                travel.out_total = 0;
-            }
-            if(travel.out_propina == null){
-                travel.out_propina = 0;
+            if(travel.encrypt){
+                travel.id_transaccion = aes256.decrypt(key, travel.id_transaccion);
+                travel.out_fecha = aes256.decrypt(travel.out_fecha);
+                travel.out_hora = aes256.decrypt(travel.out_hora);
+                travel.out_id_serv = aes256.decrypt(travel.out_id_serv);
+                travel.out_origen = aes256.decrypt(travel.out_origen); //No se usa
+                travel.out_destino = aes256.decrypt(travel.out_destino);//No se usa
+                travel.out_total = aes256.decrypt(travel.out_total);
+                travel.out_propina = aes256.decrypt(travel.out_propina);
+                travel.out_estado_servicio = aes256.decrypt(travel.out_estado_servicio);
             }
 
-            //console.log(travel.estado_servicio);
-
-            if(!obj_aux.includes(fecha_final)){
-                obj_aux.push(fecha_final);
+            if(!obj_aux.includes(travel.out_fecha)){
+                obj_aux.push(travel.out_fecha);
             }
+
             obj_aux.push(travel);
         });
 
@@ -106,13 +93,13 @@ export default class TravelScreen extends React.Component {
                 if (object.hasOwnProperty('out_fecha')) {
                     if(object.estado_servicio === "Finalizada con exito"){
                         obj_items_aux.push(
-                            <TouchableOpacity key={"view_1_" + index} onPress={this.changeStateTravel} style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
+                            <View key={"view_1_" + index} style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
                                 <Text key={"hora_" + index} style={{ fontSize: 18, fontWeight: 'bold', paddingLeft: 30 }}>{object.out_hora}</Text>
                                 <Text key={"total_" + index} style={{ fontSize: 18, fontWeight: 'bold' }}>${object.out_total}</Text>
                                 <Text key={"propina_" + index} style={{ fontSize: 18, fontWeight: 'bold', paddingRight:30 }}>${object.out_propina}</Text>
-                            </TouchableOpacity>
+                            </View>
                         );
-                        obj_items_aux.push(
+                        /*obj_items_aux.push(
                             <View key={"view_2_" + index} style={{ display: !this.state.displayAddr ? 'none' :'flex', justifyContent: 'flex-start', flexDirection: 'row', margin: 5 }}>
                                 <Icon key={"icon_origen_" + index} name='chevron-right' size={15} style={{ color: 'green', paddingLeft: 10 }} />
                                 <Text key={"origen_" + index} style={{ fontSize: 15, paddingLeft: 5 }}>{object.out_origen}</Text>
@@ -123,12 +110,12 @@ export default class TravelScreen extends React.Component {
                                 <Icon key={"icon_destino_" + index} name='chevron-right' size={15} style={{ color: 'red', paddingLeft: 10 }} />
                                 <Text key={"destino_" + index} style={{ fontSize: 15, paddingLeft: 5 }}>{object.out_destino}</Text>
                             </View>
-                        );
+                        );*/
                     }else{
                         obj_items_aux.push(
                             <View key={"view_1_" + index} style={{ justifyContent: 'space-around', flexDirection: 'row', marginHorizontal: 5 }}>
                                 <Text key={"hora_" + index} style={{ fontSize: 18, fontWeight: 'bold', paddingLeft: 30 }}>{object.out_hora}</Text>
-                                <Text key={"cancelado_" + index} style={{ fontSize: 20, paddingLeft: 15, fontWeight: 'bold' }}>Cancelado por el cliente</Text>
+                                <Text key={"cancelado_" + index} style={{ fontSize: 20, paddingLeft: 15, fontWeight: 'bold' }}>{object.estado_servicio}</Text>
                             </View>
                         );
                     }
@@ -165,30 +152,16 @@ export default class TravelScreen extends React.Component {
                 </View>);
     }
 
-    changeStateTravel = () => {
-        if(this.state.displayAddr){
-            this.setState({
-                displayAddr: false
-            });
-        }else{
-            this.setState({
-                displayAddr: true
-            });
-        }
-        this.componentBody();
-        console.log(this.state.displayAddr);
-    }
-
     render() {
         return (
             <ScrollView>
                 <View>
                     <TopTemplate></TopTemplate>
                     <Divider style={styles.row}></Divider>
-                    <View>
-                        <Table>
-                            <Row data={this.state.tableHead} style={styles.head} textStyle={styles.text} />
-                        </Table>
+                    <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
+                            <Text style={{ fontSize: 14, paddingLeft: 30 }}>Fecha/Hora</Text>
+                            <Text style={{ fontSize: 14}}>Ganancias MXN</Text>
+                            <Text style={{ fontSize: 14, paddingRight:30 }}>Extra MXN</Text>
                     </View>
                 </View>
                 { this.state.validateWS ? this.state.obj_items : this.setInfoWS() }
