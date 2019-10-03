@@ -1,7 +1,7 @@
 // In App.js in a new project
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableHighlight, Picker } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Picker } from 'react-native';
 
 export default class ReferDriversScreen extends React.Component {
     constructor(props) {
@@ -48,11 +48,11 @@ export default class ReferDriversScreen extends React.Component {
                 }}>
                     Asegura que tu amigo seleccione Colima al registrarse
                 </Text>
-                <TouchableHighlight
+                <TouchableOpacity
                     style={styles.buttonLink}
                     onPress={this.test}>
                     <Text>Obtener enlace</Text>
-                </TouchableHighlight>
+                </TouchableOpacity>
 
             </View>
         );
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     buttonLink: {
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#DDDDDD',
+        backgroundColor: '#ec6a2c',
         padding: 10,
         marginHorizontal: 30,
         marginTop: 100

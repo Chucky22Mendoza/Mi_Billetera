@@ -122,51 +122,8 @@ export default class WalletScreen extends React.Component {
             <View>
                 <ScrollView style={{marginBottom: 75}}>
 
-                    <Divider style={styles.row}></Divider>
+                    <TopTemplate></TopTemplate>
 
-                    <View style={{
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        flexDirection: 'row',
-                        height: 60
-                    }}>
-                        <View style={{
-                            flexDirection: 'row',
-                            alignItems: 'center'
-                        }}>
-                            <Switch value={this.state.switchValue} onValueChange={(switchValue) => this.setState({ switchValue })} />
-                            <Text style={{ fontSize: 20 }}>{this.state.switchValue ? 'Conectado' : 'Desconectado'}</Text>
-                        </View>
-                        <View style={{
-                            flexDirection: 'row',
-                            alignItems: 'center'
-                        }}>
-                            <Icon
-                                name='exclamation-circle'
-                                size={40}
-                                onPress={this.test}
-                                style={{
-                                    marginRight: 5
-                                }}
-                            />
-                            <Icon
-                                name='question-circle'
-                                size={40}
-                                onPress={this.test}
-                                style={{
-                                    marginRight: 5
-                                }}
-                            />
-                            <Icon
-                                name='cog'
-                                size={40}
-                                onPress={this.test}
-                                style={{
-                                    marginRight: 20
-                                }}
-                            />
-                        </View>
-                    </View>
                     <TouchableOpacity onPress={() => this.state.total_gan != 0 ? this.props.navigation.navigate("Earning", { total_gan: this.state.total_gan }) : Alert('Esperando al servidor', 'Wait')}>
                         <View
                             style={{
@@ -507,6 +464,9 @@ export default class WalletScreen extends React.Component {
                             name='car'
                             size={45}
                             onPress={this.test}
+                            style={{
+                                    color: '#ec6a2c'
+                                }}
                         />
                         <Text>Inicio</Text>
                     </View>
@@ -520,6 +480,9 @@ export default class WalletScreen extends React.Component {
                             <Icon
                                 name='wallet'
                                 size={45}
+                                style={{
+                                    color: '#ec6a2c'
+                                }}
                             />
                             <Text>Mi billetera</Text>
                         </View>
@@ -534,6 +497,9 @@ export default class WalletScreen extends React.Component {
                             name='user'
                             size={45}
                             onPress={this.test}
+                            style={{
+                                color: '#ec6a2c'
+                            }}
                         />
                         <Text>Mi perfil</Text>
                     </View>

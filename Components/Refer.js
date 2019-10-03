@@ -12,7 +12,7 @@ export default class ReferScreen extends React.Component {
         this.state = {
             drivers: true,
             passengers: false,
-            backgroundColorDrivers: 'green',
+            backgroundColorDrivers: '#ec6a2c',
             backgroundColorPassengers: '#DDDDDD'
         };
     }
@@ -28,14 +28,14 @@ export default class ReferScreen extends React.Component {
     changeToDrivers = () => {
         this.setState({'drivers': true});
         this.setState({'passengers': false});
-        this.setState({ backgroundColorDrivers: 'green' });
+        this.setState({ backgroundColorDrivers: '#ec6a2c' });
         this.setState({ backgroundColorPassengers: '#DDDDDD' });
     };
 
     changeToPassangers = () => {
         this.setState({'passengers': true});
         this.setState({'drivers': false});
-        this.setState({ backgroundColorPassengers: 'green' });
+        this.setState({ backgroundColorPassengers: '#ec6a2c' });
         this.setState({ backgroundColorDrivers: '#DDDDDD' });
     };
 

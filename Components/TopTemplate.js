@@ -43,7 +43,8 @@ export default class ExtraTemplate extends React.Component {
                             size={40}
                             onPress={this.test}
                             style={{
-                                marginRight: 5
+                                marginRight: 5,
+                                color: '#ff8834'
                             }}
                         />
                         <Icon
@@ -51,7 +52,8 @@ export default class ExtraTemplate extends React.Component {
                             size={40}
                             onPress={this.test}
                             style={{
-                                marginRight: 5
+                                marginRight: 5,
+                                color: '#ff8834'
                             }}
                         />
                         <Icon
@@ -59,7 +61,8 @@ export default class ExtraTemplate extends React.Component {
                             size={40}
                             onPress={this.test}
                             style={{
-                                marginRight: 20
+                                marginRight: 20,
+                                color: '#ff8834'
                             }}
                         />
                     </View>

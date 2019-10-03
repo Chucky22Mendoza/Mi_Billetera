@@ -28,9 +28,6 @@
     },
     "android": {
       "package": "com.kiotrack.mi_billetera"
-    },
-    "rnpm": {
-      "assets": ["./assets/fonts"]
     }
   }
 }

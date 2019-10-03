@@ -12,11 +12,10 @@ export default class CardScreen extends React.Component {
         this.state = {
             total: true,
             earnings: false,
-            backgroundColorTotal: 'green',
+            backgroundColorTotal: '#ec6a2c',
             backgroundColorEarning: '#DDDDDD',
             cardTotalPrincipal: this.props.navigation.state.params.tarjeta_gan
         };
-        console.log(this.props.navigation.state.params.tarjeta_gan);
     }
 
     test = () => {
@@ -30,14 +29,14 @@ export default class CardScreen extends React.Component {
     changeToTotal = () => {
         this.setState({ 'total': true});
         this.setState({ 'earnings': false});
-        this.setState({ backgroundColorTotal: 'green' });
+        this.setState({ backgroundColorTotal: '#ec6a2c' });
         this.setState({ backgroundColorEarning: '#DDDDDD' });
     };
 
     changeToEarnings = () => {
         this.setState({ 'total': false});
         this.setState({ 'earnings': true});
-        this.setState({ backgroundColorEarning: 'green' });
+        this.setState({ backgroundColorEarning: '#ec6a2c'});
         this.setState({ backgroundColorTotal: '#DDDDDD' });
     };
 
