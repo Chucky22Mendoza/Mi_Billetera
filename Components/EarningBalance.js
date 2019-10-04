@@ -24,7 +24,7 @@ export default class EarningBalanceScreen extends React.Component {
     async componentDidMount(){
         try{
 
-            const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_79/tarjeta', {
+            const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_80/tarjeta', {
                 id_chofer: this.state.id_chofer
             });
             const obj = res.data.datos;
@@ -51,18 +51,10 @@ export default class EarningBalanceScreen extends React.Component {
         earnings.forEach(earning => {
             if(earning.encrypt){
                 earning.out_fecha = aes256.decrypt(key, earning.out_fecha);
-                earning.out_id_tran = aes256.decrypt(key, earning.out_id_tran);
-                earning.out_form_pago = aes256.decrypt(key, earning.out_form_pago);
-                earning.out_id_serv = aes256.decrypt(key, earning.out_id_serv);
-                earning.out_total = aes256.decrypt(key, earning.out_total);
-                earning.out_cuota_plat = aes256.decrypt(key, earning.out_cuota_plat);
-                earning.out_cuota_socio = aes256.decrypt(key, earning.out_cuota_socio);
+                earning.out_id_servicio = aes256.decrypt(key, earning.out_id_servicio);
+                earning.out_ganancia = aes256.decrypt(key, earning.out_ganancia);
                 earning.out_hora = aes256.decrypt(key, earning.out_hora);
-                earning.out_cupon = aes256.decrypt(key, earning.out_cupon);
             }
-
-            earning.out_ganancia_total = parseFloat(earning.out_total) - (parseFloat(earning.out_cuota_plat) + parseFloat(earning.out_cuota_socio));
-            earning.out_ganancia_total = this.getCentavos(earning.out_ganancia_total);
 
             if(!obj_aux.includes(earning.out_fecha)){
                 obj_aux.push(earning.out_fecha);
@@ -92,14 +84,21 @@ export default class EarningBalanceScreen extends React.Component {
             obj_actual.forEach((object, index) => {
                 obj_items_aux.push(<Divider key={"divider_inicio_" + index} style={styles.row}></Divider>);
                 if (object.hasOwnProperty('out_fecha')) {
+                    object.out_ganancia
+                    if(object.out_ganancia.indexOf('-') != -1){
+                        object.out_ganancia = object.out_ganancia.replace('-', '');
+                        object.out_ganancia = '- $' + object.out_ganancia + ' MXN';
+                    }else{
+                        object.out_ganancia = '+ $' + object.out_ganancia + ' MXN';
+                    }
                     obj_items_aux.push(
                         <View key={"view_principal_" + index}>
                             <View key={"view_1_" + index} style={{ justifyContent: 'space-between', flexDirection: 'row', marginHorizontal: 5 }}>
                                 <Text key={"text_hora_" + index} style={{ fontSize: 18, paddingLeft: 5, fontWeight: 'bold' }}>{object.out_hora}</Text>
-                                <Text key={"text_total_" + index} style={{ fontSize: 15, paddingLeft: 5, marginTop: 10, fontWeight: 'bold' }}>+ ${object.out_ganancia_total} MXN</Text>
+                                <Text key={"text_total_" + index} style={{ fontSize: 15, paddingLeft: 5, marginTop: 10, fontWeight: 'bold' }}>{object.out_ganancia}</Text>
                             </View>
                             <View key={"view_2_" + index} style={{ justifyContent: 'flex-start', flexDirection: 'row', marginHorizontal: 5 }}>
-                                <Text key={"text_servicio_" + index} style={{ fontSize: 15, paddingLeft: 5, paddingTop: 2 }}>{object.out_id_serv}</Text>
+                                <Text key={"text_servicio_" + index} style={{ fontSize: 15, paddingLeft: 5, paddingTop: 2 }}>{object.out_id_servicio}</Text>
                             </View>
                         </View>
                         );
