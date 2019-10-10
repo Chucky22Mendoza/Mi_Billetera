@@ -12,7 +12,7 @@ export default class TravelScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            id_chofer: 1,
+            id_chofer: this.props.navigation.state.params.id_chofer,
             objTravels: [],
             obj_aux_final: [],
             obj_items: [],
@@ -39,13 +39,14 @@ export default class TravelScreen extends React.Component {
                 objTravels: obj,
                 validateWS: true
             });
+            this.objToTravels();
         }catch(e){
             alert("No hay conexión al web service", "Error");
             this.setState({
                 validateWS: false
             });
         }
-        this.objToTravels();
+
     }
 
     objToTravels = () => {

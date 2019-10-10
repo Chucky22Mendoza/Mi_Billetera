@@ -9,7 +9,7 @@ export default class EarningBalanceScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            id_chofer: 1,
+            id_chofer: this.props.id_chofer,
             obj_aux_final: [],
             obj_items: [],
             validateWS: false,
@@ -32,6 +32,7 @@ export default class EarningBalanceScreen extends React.Component {
                 objTotalEarnings: obj,
                 validateWS: true
             });
+            this.objToTotalEarnings();
 
         }catch(e){
             console.log(e);
@@ -41,7 +42,6 @@ export default class EarningBalanceScreen extends React.Component {
             });
         }
 
-        this.objToTotalEarnings();
     }
 
     objToTotalEarnings = () => {
@@ -84,7 +84,7 @@ export default class EarningBalanceScreen extends React.Component {
             obj_actual.forEach((object, index) => {
                 obj_items_aux.push(<Divider key={"divider_inicio_" + index} style={styles.row}></Divider>);
                 if (object.hasOwnProperty('out_fecha')) {
-                    object.out_ganancia
+
                     if(object.out_ganancia.indexOf('-') != -1){
                         object.out_ganancia = object.out_ganancia.replace('-', '');
                         object.out_ganancia = '- $' + object.out_ganancia + ' MXN';
@@ -142,22 +142,6 @@ export default class EarningBalanceScreen extends React.Component {
                         style= {styles.img}
                     />
                 </View>);
-    }
-
-    getCentavos = (numberValue) =>{
-        if(numberValue == '' || numberValue == null){
-            numberValue = 0;
-        }
-
-        let valueString = numberValue.toString();
-        let split_numberValue = valueString.split('.');
-        let outValue = 0;
-        if(split_numberValue.length > 1){
-            outValue = numberValue + '0';
-        }else{
-            outValue = numberValue + '.00';
-        }
-        return outValue;
     }
 
     render() {

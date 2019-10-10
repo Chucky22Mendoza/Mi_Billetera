@@ -49,7 +49,7 @@ export default class ReferPassangerScreen extends React.Component {
                     marginHorizontal: 30,
                     marginVertical: 5
                 }}>
-                    Invita pasajeros a que descarguen MiGo
+                    Invita pasajeros a que descarguen YiMi
                 </Text>
                 <Text style={{
                     fontSize: 15,

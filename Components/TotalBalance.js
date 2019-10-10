@@ -9,7 +9,7 @@ export default class TotalBalanceScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            id_chofer: 1,
+            id_chofer: this.props.id_chofer,
             obj_aux_final: [],
             obj_items: [],
             validateWS: false,
@@ -32,6 +32,7 @@ export default class TotalBalanceScreen extends React.Component {
                 objTotalEarnings: obj,
                 validateWS: true
             });
+            this.objToTotalEarnings();
 
         }catch(e){
             console.log(e);
@@ -41,7 +42,6 @@ export default class TotalBalanceScreen extends React.Component {
             });
         }
 
-        this.objToTotalEarnings();
     }
 
     objToTotalEarnings = () => {

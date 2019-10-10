@@ -11,13 +11,13 @@ export default class EarningScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            id_chofer: 1,
             objEarnings: [],
             obj_aux_final: [],
             obj_aux_final_2: [],
             obj_items: [],
             validateWS: false,
             objTotalEarnings: {},
+            id_chofer: this.props.navigation.state.params.id_chofer,
             earningTotalPrincipal: this.props.navigation.state.params.total_gan
         };
     }

@@ -14,7 +14,8 @@ export default class CardScreen extends React.Component {
             earnings: false,
             backgroundColorTotal: '#ec6a2c',
             backgroundColorEarning: '#DDDDDD',
-            cardTotalPrincipal: this.props.navigation.state.params.tarjeta_gan
+            id_chofer: this.props.navigation.state.params.id_chofer,
+            cardTotalPrincipal: this.props.navigation.state.params.tarjeta_gan,
         };
     }
 
@@ -43,11 +44,11 @@ export default class CardScreen extends React.Component {
     fnTotalOrEarnings () {
         if( this.state.total ){
             return(
-                <TotalBalanceScreen/>
+                <TotalBalanceScreen id_chofer = { this.state.id_chofer }/>
             );
         }else{
             return(
-                <EarningBalanceScreen/>
+                <EarningBalanceScreen id_chofer = { this.state.id_chofer }/>
             );
         }
     }
@@ -81,7 +82,7 @@ export default class CardScreen extends React.Component {
                         <TouchableHighlight
                             style={[styles.button, {backgroundColor: this.state.backgroundColorTotal}]}
                             onPress={this.changeToTotal}>
-                            <Text>Total</Text>
+                            <Text>Comisiones</Text>
                         </TouchableHighlight>
 
                         <TouchableHighlight

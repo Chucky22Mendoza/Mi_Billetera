@@ -55,9 +55,22 @@ export default class WalletScreen extends React.Component {
 
 
     async componentDidMount(){
-        let date, fecha;
+        let date, day, month, year, fecha;
         date = new Date();
-        fecha = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+
+        day = date.getDate();
+        month = date.getMonth() + 1;
+        year = date.getFullYear();
+
+        if(day.toString().length == 1 ){
+            day = '0' + day;
+        }
+
+        if(month.toString().length == 1 ){
+            month = '0' + month;
+        }
+
+        fecha = day + "/" + month + "/" + year;
         this.setState({
             fecha_actual: fecha
         });
@@ -97,6 +110,20 @@ export default class WalletScreen extends React.Component {
                 out_adeudo_socio_efec = res.data.datos[0].out_adeudo_socio_efec;
             }
 
+            let obj_semana = rango_fechas.split(' ');
+            let fecha_dia_1 = obj_semana[0];
+            let fecha_dia_2 = obj_semana[4];
+
+            if (fecha_dia_1.substring(0, 1) == "0") {
+                fecha_dia_1 = fecha_dia_1.replace('0', '');
+            }
+
+            if (fecha_dia_2.substring(0, 1) == "0") {
+                fecha_dia_2 = fecha_dia_2.replace('0', '');
+            }
+
+            let semana = fecha_dia_1 + ' ' + obj_semana[1] + ' ' + obj_semana[2] + ' ' + obj_semana[3] + ' ' + fecha_dia_2 + ' ' + obj_semana[5] + ' ' + obj_semana[6];
+
             this.setState({
                 tarjeta_gan: tarjeta_gan,
                 efectivo_gan: efectivo_gan,
@@ -105,7 +132,7 @@ export default class WalletScreen extends React.Component {
                 total_gan_dia: total_gan_dia,
                 cuota_plat: cuota_plat_r,
                 cuota_socio: cuota_socio_r,
-                rango_fechas: rango_fechas,
+                rango_fechas: semana,
                 cant_servicios: cant_servicios,
                 ganancia_final: ganancia_final,
                 out_adeudo_plataforma_efec: out_adeudo_plataforma_efec,
@@ -124,7 +151,7 @@ export default class WalletScreen extends React.Component {
 
                     <TopTemplate></TopTemplate>
 
-                    <TouchableOpacity onPress={() => this.state.total_gan != 0 ? this.props.navigation.navigate("Earning", { total_gan: this.state.total_gan }) : Alert('Esperando al servidor', 'Wait')}>
+                    <TouchableOpacity onPress={() => this.state.total_gan != 0 ? this.props.navigation.navigate("Earning", { total_gan: this.state.total_gan, id_chofer: this.state.id_chofer }) : Alert('Esperando al servidor', 'Wait')}>
                         <View
                             style={{
                                 height: 70,
@@ -158,7 +185,7 @@ export default class WalletScreen extends React.Component {
 
                     <Divider style={styles.row}></Divider>
 
-                    <TouchableOpacity onPress={() => this.state.tarjeta_gan != 0 ? this.props.navigation.navigate("Card", { tarjeta_gan: this.state.tarjeta_gan }) : Alert('Esperando al servidor', 'Wait')}>
+                    <TouchableOpacity onPress={() => this.state.tarjeta_gan != 0 ? this.props.navigation.navigate("Card", { tarjeta_gan: this.state.tarjeta_gan, id_chofer: this.state.id_chofer }) : Alert('Esperando al servidor', 'Wait')}>
                         <View style={{
                             height: 25,
                             alignItems: 'center',
@@ -275,7 +302,7 @@ export default class WalletScreen extends React.Component {
 
                     <Divider style={styles.row}></Divider>
 
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate("Travel")}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate("Travel", {id_chofer: this.state.id_chofer})}>
                         <View style={{
                             height: 25,
                             alignItems: 'center',
@@ -397,7 +424,7 @@ export default class WalletScreen extends React.Component {
                             width: 200
                         }}>
                             <Text>${this.state.out_adeudo_plataforma_efec} MXN</Text>
-                            <Text>Cuota de servicio MiGo</Text>
+                            <Text>Cuota de servicio YiMi</Text>
                         </View>
 
                         <View style={{
@@ -414,7 +441,7 @@ export default class WalletScreen extends React.Component {
 
                     <Divider style={styles.row}></Divider>
 
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate("Refer")}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate("Refer", { id_chofer: this.state.id_chofer })}>
                         <View style={{
                             height: 25,
                             alignItems: 'center',

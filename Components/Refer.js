@@ -10,6 +10,7 @@ export default class ReferScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            id_chofer: this.props.navigation.state.params.id_chofer,
             drivers: true,
             passengers: false,
             backgroundColorDrivers: '#ec6a2c',
