@@ -13,7 +13,7 @@
     "orientation": "portrait",
     "icon": "",
     "splash": {
-      "image": "",
+      "image": "./assets/logo/Yimi_degrado_completo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

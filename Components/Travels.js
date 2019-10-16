@@ -7,6 +7,8 @@ import { Divider } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import TopTemplate from './TopTemplate';
 import axios from 'axios';
+import { Table, Row, Rows } from 'react-native-table-component';
+import * as Font from 'expo-font';
 
 export default class TravelScreen extends React.Component {
     constructor(props) {
@@ -16,7 +18,8 @@ export default class TravelScreen extends React.Component {
             objTravels: [],
             obj_aux_final: [],
             obj_items: [],
-            validateWS: false
+            validateWS: false,
+            fontLoaded: false,
         };
     }
 
@@ -29,8 +32,14 @@ export default class TravelScreen extends React.Component {
     };
 
     async componentDidMount(){
-        try{
+        await Font.loadAsync({
+            'Aller_Lt': require('./../assets/fonts/Aller_Lt.ttf'),
+            'Aller_Bd': require('./../assets/fonts/Aller_Bd.ttf'),
+        });
 
+        this.setState({fontLoaded: true});
+
+        try{
             const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_81/verviajes', {
                 id_chofer: this.state.id_chofer
             });
@@ -93,37 +102,50 @@ export default class TravelScreen extends React.Component {
                 obj_items_aux.push(<Divider key={"divider_inicio_" + index} style={styles.row}></Divider>);
                 if (object.hasOwnProperty('out_fecha')) {
                     if(object.estado_servicio === "Finalizada con exito"){
+                        let obj_data = [object.out_hora, object.out_total, object.out_propina];
+
                         obj_items_aux.push(
-                            <View key={"view_1_" + index} style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
-                                <Text key={"hora_" + index} style={{ fontSize: 18, fontWeight: 'bold', paddingLeft: 30 }}>{object.out_hora}</Text>
-                                <Text key={"total_" + index} style={{ fontSize: 18, fontWeight: 'bold' }}>${object.out_total}</Text>
-                                <Text key={"propina_" + index} style={{ fontSize: 18, fontWeight: 'bold', paddingRight:30 }}>${object.out_propina}</Text>
-                            </View>
+                            <Rows key={"row_data_" + index} data={[obj_data]} textStyle={styles.text} />
                         );
-                        /*obj_items_aux.push(
-                            <View key={"view_2_" + index} style={{ display: !this.state.displayAddr ? 'none' :'flex', justifyContent: 'flex-start', flexDirection: 'row', margin: 5 }}>
-                                <Icon key={"icon_origen_" + index} name='chevron-right' size={15} style={{ color: 'green', paddingLeft: 10 }} />
-                                <Text key={"origen_" + index} style={{ fontSize: 15, paddingLeft: 5 }}>{object.out_origen}</Text>
-                            </View>
-                        );
-                        obj_items_aux.push(
-                            <View key={"view_3_" + index} style={{ display: !this.state.displayAddr ? 'none' :'flex', justifyContent: 'flex-start', flexDirection: 'row', margin: 5 }}>
-                                <Icon key={"icon_destino_" + index} name='chevron-right' size={15} style={{ color: 'red', paddingLeft: 10 }} />
-                                <Text key={"destino_" + index} style={{ fontSize: 15, paddingLeft: 5 }}>{object.out_destino}</Text>
-                            </View>
-                        );*/
+                        /*{
+                            this.state.fontLoaded ? (
+                                <Text key={"hora_" + index} style={{ fontFamily: 'Aller_Bd', fontSize: 18, paddingLeft: 30 }}>{object.out_hora}</Text>
+                            ) : null
+                        }
+                        {
+                            this.state.fontLoaded ? (
+                                <Text key={"total_" + index} style={{ fontFamily: 'Aller_Bd', fontSize: 18 }}>${object.out_total}</Text>
+                            ) : null
+                        }
+                        {
+                            this.state.fontLoaded ? (
+                                <Text key={"propina_" + index} style={{ fontFamily: 'Aller_Bd', fontSize: 18, paddingRight: 30 }}>${object.out_propina}</Text>
+                            ) : null
+                        }*/
                     }else{
                         obj_items_aux.push(
                             <View key={"view_1_" + index} style={{ justifyContent: 'space-around', flexDirection: 'row', marginHorizontal: 5 }}>
-                                <Text key={"hora_" + index} style={{ fontSize: 18, fontWeight: 'bold', paddingLeft: 30 }}>{object.out_hora}</Text>
-                                <Text key={"cancelado_" + index} style={{ fontSize: 20, paddingLeft: 15, fontWeight: 'bold' }}>{object.estado_servicio}</Text>
+                                {
+                                    this.state.fontLoaded ? (
+                                        <Text key={"hora_" + index} style={{ fontFamily: 'Aller_Bd', fontSize: 18, paddingLeft: 30 }}>{object.out_hora}</Text>
+                                    ) : null
+                                }
+                                {
+                                    this.state.fontLoaded ? (
+                                        <Text key={"cancelado_" + index} style={{ fontFamily: 'Aller_Bd', fontSize: 20, paddingLeft: 15 }}>{object.estado_servicio}</Text>
+                                    ) : null
+                                }
                             </View>
                         );
                     }
                 }else{
                     obj_items_aux.push(
                         <View key={"view_1_title_" + index} style={{ height: 25, flexDirection: 'row', justifyContent: 'flex-start', backgroundColor: '#D4D4D4'}}>
-                            <Text key={index} style={{fontSize: 16, paddingLeft: 30}}>{object}</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text key={index} style={{ fontFamily: 'Aller_Lt', fontSize: 16, paddingLeft: 30 }}>{object}</Text>
+                                ) : null
+                            }
                         </View>
                     );
                 }
@@ -139,13 +161,7 @@ export default class TravelScreen extends React.Component {
     }
 
     setInfoWS = () =>{
-        return(<View style={{
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: 400,
-                    height: 400
-                }}>
+        return(<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 400, height: 400 }}>
                     <Image
                         source= {require('./../resource/img/loading.gif')}
                         style= {styles.img}
@@ -160,9 +176,21 @@ export default class TravelScreen extends React.Component {
                     <TopTemplate></TopTemplate>
                     <Divider style={styles.row}></Divider>
                     <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
-                            <Text style={{ fontSize: 14, paddingLeft: 30 }}>Fecha/Hora</Text>
-                            <Text style={{ fontSize: 14}}>Ganancias MXN</Text>
-                            <Text style={{ fontSize: 14, paddingRight:30 }}>Extra MXN</Text>
+                        {
+                            this.state.fontLoaded ? (
+                                <Text style={{ fontFamily: 'Aller_Lt', fontSize: 14, paddingLeft: 30 }}>Fecha/Hora</Text>
+                            ) : null
+                        }
+                        {
+                            this.state.fontLoaded ? (
+                                <Text style={{ fontFamily: 'Aller_Lt', fontSize: 14 }}>Ganancias MXN</Text>
+                            ) : null
+                        }
+                        {
+                            this.state.fontLoaded ? (
+                                <Text style={{ fontFamily: 'Aller_Lt', fontSize: 14, paddingRight: 30 }}>Extra MXN</Text>
+                            ) : null
+                        }
                     </View>
                 </View>
                 { this.state.validateWS ? this.state.obj_items : this.setInfoWS() }
@@ -189,7 +217,9 @@ const styles = StyleSheet.create({
         paddingLeft: 30
     },
     text: {
-        fontSize: 14
+        fontSize: 14,
+        fontFamily: 'Aller_Lt',
+        textAlign: 'center'
     },
     img: {
         backgroundColor: "#f0f4f7"

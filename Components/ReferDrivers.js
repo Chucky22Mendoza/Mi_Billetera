@@ -2,12 +2,14 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Picker } from 'react-native';
+import * as Font from 'expo-font';
 
 export default class ReferDriversScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            city: ''
+            city: '',
+            fontLoaded: false,
         };
     }
 
@@ -15,43 +17,56 @@ export default class ReferDriversScreen extends React.Component {
         alert("This is a test", "Hola");
     };
 
+    async componentDidMount(){
+        await Font.loadAsync({
+            'Aller_Lt': require('./../assets/fonts/Aller_Lt.ttf'),
+        });
+
+        this.setState({fontLoaded: true});
+    }
+
     render() {
         return (
             <View>
 
                 <View style={{flexDirection: 'row', marginLeft: 30, marginVertical: 10}}>
-                    <Text style={{marginTop: 15, fontSize: 16}}>Ciudad</Text>
+                    {
+                        this.state.fontLoaded ? (
+                            <Text style={{ fontFamily: 'Aller_Lt', marginTop: 15, fontSize: 16 }}>Ciudad</Text>
+                        ) : null
+                    }
                     <View style={{borderWidth: 1.2, borderRadius: 5, marginLeft: 20 }}>
-                        <Picker
-                            selectedValue={this.state.city}
-                            style={{ height: 50, width: 150}}
-                            onValueChange={(itemValue, itemIndex) =>
-                                this.setState({ city: itemValue })
-                            }>
-                            <Picker.Item label="Colima" value="Colima" />
-                            <Picker.Item label="Jalisco" value="Jalisco" />
-                        </Picker>
+                        {
+                            this.state.fontLoaded ? (
+                                <Picker
+                                    selectedValue={this.state.city}
+                                    style={{ height: 50, width: 150, fontFamily: 'Aller_Lt', }}
+                                    onValueChange={(itemValue, itemIndex) =>
+                                        this.setState({ city: itemValue })
+                                    }>
+                                    <Picker.Item label="Colima" value="Colima" />
+                                    <Picker.Item label="Jalisco" value="Jalisco" />
+                                </Picker>
+                            ) : null
+                        }
                     </View>
                 </View>
-
-                <Text style={{
-                    fontSize: 15,
-                    marginHorizontal: 30,
-                    marginVertical: 5
-                }}>
-                    Refiere a tu amigo entre DD/MM/AAAA y DD/MM/AAAA
-                </Text>
-                <Text style={{
-                    fontSize: 15,
-                    marginHorizontal: 30,
-                    marginVertical: 5
-                }}>
-                    Asegura que tu amigo seleccione Colima al registrarse
-                </Text>
-                <TouchableOpacity
-                    style={styles.buttonLink}
-                    onPress={this.test}>
-                    <Text>Obtener enlace</Text>
+                {
+                    this.state.fontLoaded ? (
+                        <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15, marginHorizontal: 30, marginVertical: 5 }}>Refiere a tu amigo entre DD/MM/AAAA y DD/MM/AAAA</Text>
+                    ) : null
+                }
+                {
+                    this.state.fontLoaded ? (
+                        <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15, marginHorizontal: 30, marginVertical: 5 }}>Asegura que tu amigo seleccione Colima al registrarse</Text>
+                    ) : null
+                }
+                <TouchableOpacity style={styles.buttonLink} onPress={this.test}>
+                    {
+                        this.state.fontLoaded ? (
+                            <Text style={{ fontFamily: 'Aller_Lt' }}>Obtener enlace</Text>
+                        ) : null
+                    }
                 </TouchableOpacity>
 
             </View>

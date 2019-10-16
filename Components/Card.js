@@ -1,10 +1,11 @@
 // In App.js in a new project
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableHighlight, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import TopTemplate from './TopTemplate';
 import TotalBalanceScreen from './TotalBalance';
-import EarningBalanceScreen from './EarningBalance'
+import EarningBalanceScreen from './EarningBalance';
+import * as Font from 'expo-font';
 
 export default class CardScreen extends React.Component {
     constructor(props) {
@@ -16,6 +17,7 @@ export default class CardScreen extends React.Component {
             backgroundColorEarning: '#DDDDDD',
             id_chofer: this.props.navigation.state.params.id_chofer,
             cardTotalPrincipal: this.props.navigation.state.params.tarjeta_gan,
+            fontLoaded: false,
         };
     }
 
@@ -26,6 +28,14 @@ export default class CardScreen extends React.Component {
     static navigationOptions = {
         title: 'Tarjeta'
     };
+
+    async componentDidMount(){
+        await Font.loadAsync({
+            'Aller_Lt': require('./../assets/fonts/Aller_Lt.ttf'),
+        });
+
+        this.setState({fontLoaded: true});
+    }
 
     changeToTotal = () => {
         this.setState({ 'total': true});
@@ -67,9 +77,21 @@ export default class CardScreen extends React.Component {
                     }}>
 
                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ fontSize: 20 }}>${this.state.cardTotalPrincipal} MXN</Text>
-                            <Text style={{ fontSize: 15 }}>Puedes retirar ${this.state.cardTotalPrincipal} MXN</Text>
-                            <Text style={{ fontSize: 15 }}>este próximo lunes</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', fontSize: 20 }}>${this.state.cardTotalPrincipal} MXN</Text>
+                                ) : null
+                            }
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15 }}>Puedes retirar ${this.state.cardTotalPrincipal} MXN</Text>
+                                ) : null
+                            }
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15 }}>este próximo lunes</Text>
+                                ) : null
+                            }
                         </View>
 
                     </View>
@@ -79,17 +101,25 @@ export default class CardScreen extends React.Component {
                         justifyContent: 'center',
                         height: 50
                     }}>
-                        <TouchableHighlight
+                        <TouchableOpacity
                             style={[styles.button, {backgroundColor: this.state.backgroundColorTotal}]}
                             onPress={this.changeToTotal}>
-                            <Text>Comisiones</Text>
-                        </TouchableHighlight>
+                                {
+                                    this.state.fontLoaded ? (
+                                        <Text style={{ fontFamily: 'Aller_Lt'}}>Comisiones</Text>
+                                    ) : null
+                                }
+                        </TouchableOpacity>
 
-                        <TouchableHighlight
+                        <TouchableOpacity
                             style={[styles.button, {backgroundColor: this.state.backgroundColorEarning}]}
                             onPress={this.changeToEarnings}>
-                            <Text>Ganancias</Text>
-                        </TouchableHighlight>
+                                {
+                                    this.state.fontLoaded ? (
+                                        <Text style={{ fontFamily: 'Aller_Lt' }}>Ganancias</Text>
+                                    ) : null
+                                }
+                        </TouchableOpacity>
                     </View>
                     { this.fnTotalOrEarnings() }
                 </View>

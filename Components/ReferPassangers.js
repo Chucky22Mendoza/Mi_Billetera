@@ -1,12 +1,24 @@
 // In App.js in a new project
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import * as Font from 'expo-font';
 
 export default class ReferPassangerScreen extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            fontLoaded: false,
+        };
+    }
+
+    async componentDidMount(){
+        await Font.loadAsync({
+            'Aller_Lt': require('./../assets/fonts/Aller_Lt.ttf'),
+            'Aller_Bd': require('./../assets/fonts/Aller_Bd.ttf'),
+        });
+
+        this.setState({fontLoaded: true});
     }
 
     test = () => {
@@ -16,48 +28,49 @@ export default class ReferPassangerScreen extends React.Component {
     render() {
         return (
             <View>
-                <Text style={{marginLeft: 30, marginHorizontal: 5}}>Código promocional</Text>
+                {
+                    this.state.fontLoaded ? (
+                        <Text style={{ fontFamily: 'Aller_Lt',  marginLeft: 30, marginHorizontal: 5 }}>Código promocional</Text>
+                    ) : null
+                }
                 <View style={{justifyContent: 'center', alignItems: 'center'}}>
                     <View style={styles.code}>
-                        <Text style={{marginLeft: 30}}>1d2d35f</Text>
-                        <TouchableHighlight
+                        {
+                            this.state.fontLoaded ? (
+                                <Text style={{ fontFamily: 'Aller_Lt', marginLeft: 30 }}>1d2d35f</Text>
+                            ) : null
+                        }
+                        <TouchableOpacity
                             style={styles.buttonCopy}
                             onPress={this.test}>
-                            <Text style={{
-                                color:'#fff'
-                            }}>Copiar</Text>
-                        </TouchableHighlight>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', color: '#fff' }}>Copiar</Text>
+                                ) : null
+                            }
+                        </TouchableOpacity>
                     </View>
                 </View>
-                <Text style={{
-                    fontWeight: 'bold',
-                    fontSize: 15,
-                    marginHorizontal: 30,
-                    marginVertical: 5
-                }}>
-                    Instrucciones
-                </Text>
-                <Text style={{
-                    fontSize: 15,
-                    marginHorizontal: 30,
-                    marginVertical: 5
-                }}>
-                    Comparte tu código durante tus viajes, invita a pasajeros a ingresar tu código
-                </Text>
-                <Text style={{
-                    fontSize: 15,
-                    marginHorizontal: 30,
-                    marginVertical: 5
-                }}>
-                    Invita pasajeros a que descarguen YiMi
-                </Text>
-                <Text style={{
-                    fontSize: 15,
-                    marginHorizontal: 30,
-                    marginVertical: 5
-                }}>
-                    Obten $xx por cada usuario que refieras
-                </Text>
+                {
+                    this.state.fontLoaded ? (
+                        <Text style={{ fontFamily: 'Aller_Bd', fontSize: 15, marginHorizontal: 30, marginVertical: 5 }}>Instrucciones</Text>
+                    ) : null
+                }
+                {
+                    this.state.fontLoaded ? (
+                        <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15, marginHorizontal: 30, marginVertical: 5 }}>Comparte tu código durante tus viajes, invita a pasajeros a ingresar tu código</Text>
+                    ) : null
+                }
+                {
+                    this.state.fontLoaded ? (
+                        <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15, marginHorizontal: 30, marginVertical: 5 }}>Invita pasajeros a que descarguen YiMi</Text>
+                    ) : null
+                }
+                {
+                    this.state.fontLoaded ? (
+                        <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15, marginHorizontal: 30, marginVertical: 5 }}>Obten $xx por cada usuario que refieras</Text>
+                    ) : null
+                }
             </View>
         );
     }

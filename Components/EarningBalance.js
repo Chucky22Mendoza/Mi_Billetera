@@ -4,6 +4,7 @@ import React from 'react';
 import { View, StyleSheet, Text, Image } from 'react-native';
 import { Divider } from 'react-native-elements';
 import axios from 'axios';
+import * as Font from 'expo-font';
 
 export default class EarningBalanceScreen extends React.Component {
     constructor(props) {
@@ -13,7 +14,8 @@ export default class EarningBalanceScreen extends React.Component {
             obj_aux_final: [],
             obj_items: [],
             validateWS: false,
-            objTotalEarnings: []
+            objTotalEarnings: [],
+            fontLoaded: false,
         };
     }
 
@@ -22,8 +24,14 @@ export default class EarningBalanceScreen extends React.Component {
     };
 
     async componentDidMount(){
-        try{
+        await Font.loadAsync({
+            'Aller_Lt': require('./../assets/fonts/Aller_Lt.ttf'),
+            'Aller_Bd': require('./../assets/fonts/Aller_Bd.ttf'),
+        });
 
+        this.setState({fontLoaded: true});
+
+        try{
             const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_80/tarjeta', {
                 id_chofer: this.state.id_chofer
             });
@@ -94,11 +102,23 @@ export default class EarningBalanceScreen extends React.Component {
                     obj_items_aux.push(
                         <View key={"view_principal_" + index}>
                             <View key={"view_1_" + index} style={{ justifyContent: 'space-between', flexDirection: 'row', marginHorizontal: 5 }}>
-                                <Text key={"text_hora_" + index} style={{ fontSize: 18, paddingLeft: 5, fontWeight: 'bold' }}>{object.out_hora}</Text>
-                                <Text key={"text_total_" + index} style={{ fontSize: 15, paddingLeft: 5, marginTop: 10, fontWeight: 'bold' }}>{object.out_ganancia}</Text>
+                                {
+                                    this.state.fontLoaded ? (
+                                        <Text key={"text_hora_" + index} style={{ fontFamily: 'Aller_Bd', fontSize: 18, paddingLeft: 5 }}>{object.out_hora}</Text>
+                                    ) : null
+                                }
+                                {
+                                    this.state.fontLoaded ? (
+                                        <Text key={"text_total_" + index} style={{ fontFamily: 'Aller_Bd', fontSize: 15, paddingLeft: 5, marginTop: 10 }}>{object.out_ganancia}</Text>
+                                    ) : null
+                                }
                             </View>
                             <View key={"view_2_" + index} style={{ justifyContent: 'flex-start', flexDirection: 'row', marginHorizontal: 5 }}>
-                                <Text key={"text_servicio_" + index} style={{ fontSize: 15, paddingLeft: 5, paddingTop: 2 }}>{object.out_id_servicio}</Text>
+                                {
+                                    this.state.fontLoaded ? (
+                                        <Text key={"text_servicio_" + index} style={{ fontFamily: 'Aller_Lt', fontSize: 15, paddingLeft: 5, paddingTop: 2 }}>{object.out_id_servicio}</Text>
+                                    ) : null
+                                }
                             </View>
                         </View>
                         );
@@ -112,7 +132,11 @@ export default class EarningBalanceScreen extends React.Component {
                             justifyContent: 'space-between',
                             backgroundColor: '#D4D4D4'
                         }}>
-                            <Text key={"text_fecha_" + index} style={{fontSize: 15, paddingLeft: 5}}>{object}</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text key={"text_fecha_" + index} style={{ fontFamily: 'Aller_Lt', fontSize: 15, paddingLeft: 5 }}>{object}</Text>
+                                ) : null
+                            }
                         </View>
                     );
 

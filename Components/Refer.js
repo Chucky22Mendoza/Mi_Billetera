@@ -1,10 +1,11 @@
 // In App.js in a new project
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import ReferDriverScreen from './ReferDrivers';
 import ReferPassangerScreen from './ReferPassangers';
 import TopTemplate from './TopTemplate';
+import * as Font from 'expo-font';
 
 export default class ReferScreen extends React.Component {
     constructor(props) {
@@ -14,7 +15,8 @@ export default class ReferScreen extends React.Component {
             drivers: true,
             passengers: false,
             backgroundColorDrivers: '#ec6a2c',
-            backgroundColorPassengers: '#DDDDDD'
+            backgroundColorPassengers: '#DDDDDD',
+            fontLoaded: false,
         };
     }
 
@@ -25,6 +27,14 @@ export default class ReferScreen extends React.Component {
     static navigationOptions = {
         title: 'Refiere'
     };
+
+    async componentDidMount(){
+        await Font.loadAsync({
+            'Aller_Lt': require('./../assets/fonts/Aller_Lt.ttf'),
+        });
+
+        this.setState({fontLoaded: true});
+    }
 
     changeToDrivers = () => {
         this.setState({'drivers': true});
@@ -56,23 +66,24 @@ export default class ReferScreen extends React.Component {
         return (
             <View>
                 <TopTemplate></TopTemplate>
-                <View style={{
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    paddingTop: 20,
-                    paddingBottom: 5,
-                }}>
-                    <TouchableHighlight
-                        style={[styles.button, {backgroundColor: this.state.backgroundColorDrivers}]}
-                        onPress={this.changeToDrivers}>
-                        <Text>Invita conductores</Text>
-                    </TouchableHighlight>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', paddingTop: 20, paddingBottom: 5, }}>
+                    <TouchableOpacity style={[styles.button, {backgroundColor: this.state.backgroundColorDrivers}]} onPress={this.changeToDrivers}>
+                        {
+                            this.state.fontLoaded ? (
+                                <Text style={{ fontFamily: 'Aller_Lt' }}>Invita conductores</Text>
+                            ) : null
+                        }
+                    </TouchableOpacity>
 
-                    <TouchableHighlight
+                    <TouchableOpacity
                         style={[styles.button, {backgroundColor: this.state.backgroundColorPassengers}]}
                         onPress={this.changeToPassangers}>
-                        <Text>Invita pasajeros</Text>
-                    </TouchableHighlight>
+                        {
+                            this.state.fontLoaded ? (
+                                <Text style={{ fontFamily: 'Aller_Lt' }}>Invita pasajeros</Text>
+                            ) : null
+                        }
+                    </TouchableOpacity>
                 </View>
                     { this.fnDriversOrPassengers() }
             </View>

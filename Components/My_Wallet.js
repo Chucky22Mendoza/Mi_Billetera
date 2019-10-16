@@ -7,11 +7,9 @@ import { Table, Row } from 'react-native-table-component';
 import { Divider } from 'react-native-elements';
 import TopTemplate from './TopTemplate';
 import axios from 'axios';
-import { SQLite } from "expo";
+import * as Font from 'expo-font';
 //const aes256 = require('aes256');
 //var key = "92AE31A79FEEB2A3";
-
-//const db = SQLite.openDatabase('database.db');
 
 export default class WalletScreen extends React.Component {
     constructor(props) {
@@ -35,6 +33,7 @@ export default class WalletScreen extends React.Component {
             tiempo_minutos: 55,
             tiempo_horas: 10,
             switchValue: true,
+            fontLoaded: false,
             connListItems: [],
             tableData_1: [
                 [2, '10:55']
@@ -55,6 +54,13 @@ export default class WalletScreen extends React.Component {
 
 
     async componentDidMount(){
+        await Font.loadAsync({
+            'Aller_Lt': require('./../assets/fonts/Aller_Lt.ttf'),
+            'Aller_Bd': require('./../assets/fonts/Aller_Bd.ttf'),
+        });
+
+        this.setState({fontLoaded: true});
+
         let date, day, month, year, fecha;
         date = new Date();
 
@@ -151,7 +157,7 @@ export default class WalletScreen extends React.Component {
 
                     <TopTemplate></TopTemplate>
 
-                    <TouchableOpacity onPress={() => this.state.total_gan != 0 ? this.props.navigation.navigate("Earning", { total_gan: this.state.total_gan, id_chofer: this.state.id_chofer }) : Alert('Esperando al servidor', 'Wait')}>
+                    <TouchableOpacity onPress={() => this.state.total_gan != 0 ? this.props.navigation.navigate("Earning", { total_gan: this.state.total_gan, id_chofer: this.state.id_chofer, rango_fechas: this.state.rango_fechas }) : Alert('Esperando al servidor', 'Wait')}>
                         <View
                             style={{
                                 height: 70,
@@ -162,9 +168,21 @@ export default class WalletScreen extends React.Component {
                             }}>
 
                             <View style={{ alignItems: 'center', justifyContent: 'flex-end' }}>
-                                <Text style={{ fontSize: 15 }}>Ganancias de esta semana</Text>
-                                <Text style={{ fontSize: 10 }}>{this.state.rango_fechas}</Text>
-                                <Text style={{ fontSize: 20 }}>${this.state.total_gan} MXN</Text>
+                                {
+                                    this.state.fontLoaded ? (
+                                        <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15 }}>Ganancias de esta semana</Text>
+                                    ) : null
+                                }
+                                {
+                                    this.state.fontLoaded ? (
+                                        <Text style={{ fontFamily: 'Aller_Lt', fontSize: 10 }}>{this.state.rango_fechas}</Text>
+                                    ) : null
+                                }
+                                {
+                                    this.state.fontLoaded ? (
+                                        <Text style={{ fontFamily: 'Aller_Lt', fontSize: 20 }}>${this.state.total_gan} MXN</Text>
+                                    ) : null
+                                }
                             </View>
 
                             <View style={{
@@ -195,13 +213,21 @@ export default class WalletScreen extends React.Component {
                         }}>
 
                             <View>
-                                <Text style={{ fontSize: 15 }}>Tarjeta</Text>
+                                {
+                                    this.state.fontLoaded ? (
+                                        <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15 }}>Tarjeta</Text>
+                                    ) : null
+                                }
                             </View>
 
                             <View style={{
                                 flexDirection: 'row'
                             }}>
-                                <Text style={{ fontSize: 15 }}>${this.state.tarjeta_gan} MXN</Text>
+                                {
+                                    this.state.fontLoaded ? (
+                                        <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15 }}>${this.state.tarjeta_gan} MXN</Text>
+                                    ) : null
+                                }
                                 <Icon
                                     name='chevron-right'
                                     size={15}
@@ -223,13 +249,21 @@ export default class WalletScreen extends React.Component {
                     }}>
 
                         <View>
-                            <Text style={{ fontSize: 15 }}>Efectivo</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15 }}>Efectivo</Text>
+                                ) : null
+                            }
                         </View>
 
                         <View style={{
                             flexDirection: 'row'
                         }}>
-                            <Text style={{ fontSize: 15 }}>${this.state.efectivo_gan} MXN</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15 }}>${this.state.efectivo_gan} MXN</Text>
+                                ) : null
+                            }
                         </View>
 
                     </View>
@@ -245,13 +279,21 @@ export default class WalletScreen extends React.Component {
                     }}>
 
                         <View>
-                            <Text style={{ fontSize: 15 }}>Extra</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15 }}>Extra</Text>
+                                ) : null
+                            }
                         </View>
 
                         <View style={{
                             flexDirection: 'row'
                         }}>
-                            <Text style={{ fontSize: 15 }}>${this.state.externo_gan} MXN</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15 }}>${this.state.externo_gan} MXN</Text>
+                                ) : null
+                            }
                         </View>
 
                     </View>
@@ -267,13 +309,21 @@ export default class WalletScreen extends React.Component {
                     }}>
 
                         <View>
-                            <Text style={{ fontSize: 15 }}>Comisión plataforma</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15 }}>Comisión plataforma</Text>
+                                ) : null
+                            }
                         </View>
 
                         <View style={{
                             flexDirection: 'row'
                         }}>
-                            <Text style={{ fontSize: 15 }}>${this.state.cuota_plat_r} MXN</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15 }}>${this.state.cuota_plat_r} MXN</Text>
+                                ): null
+                            }
                         </View>
 
                     </View>
@@ -289,13 +339,21 @@ export default class WalletScreen extends React.Component {
                     }}>
 
                         <View>
-                            <Text style={{ fontSize: 15 }}>Comisión socio</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15 }}>Comisión socio</Text>
+                                ) : null
+                            }
                         </View>
 
                         <View style={{
                             flexDirection: 'row'
                         }}>
-                            <Text style={{ fontSize: 15 }}>${this.state.cuota_socio_r} MXN</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15 }}>${this.state.cuota_socio_r} MXN</Text>
+                                ): null
+                            }
                         </View>
 
                     </View>
@@ -312,7 +370,11 @@ export default class WalletScreen extends React.Component {
                         }}>
 
                             <View>
-                                <Text style={{ fontSize: 15 }}>Ver Viajes</Text>
+                                {
+                                    this.state.fontLoaded ? (
+                                        <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15 }}>Ver Viajes</Text>
+                                    ) : null
+                                }
                             </View>
 
                             <View style={{
@@ -337,7 +399,11 @@ export default class WalletScreen extends React.Component {
                     }}>
 
                         <View>
-                            <Text>{this.state.fecha_actual}</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt' }}>{this.state.fecha_actual}</Text>
+                                ) : null
+                            }
                         </View>
 
                     </View>
@@ -357,8 +423,16 @@ export default class WalletScreen extends React.Component {
                             marginLeft: 40,
                             width: 200
                         }}>
-                            <Text>{this.state.cant_servicios}</Text>
-                            <Text>Viajes</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', }}>{this.state.cant_servicios}</Text>
+                                ) : null
+                            }
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', }}>Viajes</Text>
+                                ) : null
+                            }
                         </View>
 
                         <View style={{
@@ -367,8 +441,17 @@ export default class WalletScreen extends React.Component {
                             marginRight: 80,
                             width: 200
                         }}>
-                            <Text>{this.state.tiempo_horas}:{this.state.tiempo_minutos}</Text>
-                            <Text>Tiempo conectado</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    //Agregar la función para el tiempo conectado
+                                    <Text style={{ fontFamily: 'Aller_Lt', }}>{this.state.tiempo_horas}:{this.state.tiempo_minutos}</Text>
+                                ) : null
+                            }
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', }}>Tiempo conectado</Text>
+                                ) : null
+                            }
                         </View>
 
                     </View>
@@ -384,11 +467,19 @@ export default class WalletScreen extends React.Component {
                     }}>
 
                         <View>
-                            <Text>Ganancias del día</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', }}>Ganancias del día</Text>
+                                ) : null
+                            }
                         </View>
 
                         <View>
-                            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>${this.state.total_gan_dia} MXN</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Bd', fontSize: 16 }}>${this.state.total_gan_dia} MXN</Text>
+                                ) : null
+                            }
                         </View>
 
                     </View>
@@ -403,7 +494,11 @@ export default class WalletScreen extends React.Component {
                     }}>
 
                         <View>
-                            <Text>Adeudos por cobros en efecivo</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', }}>Adeudos por cobros en efecivo</Text>
+                                ) : null
+                            }
                         </View>
 
                     </View>
@@ -423,8 +518,16 @@ export default class WalletScreen extends React.Component {
                             marginLeft: 40,
                             width: 200
                         }}>
-                            <Text>${this.state.out_adeudo_plataforma_efec} MXN</Text>
-                            <Text>Cuota de servicio YiMi</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', }}>${this.state.out_adeudo_plataforma_efec} MXN</Text>
+                                ) : null
+                            }
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', }}>Cuota de servicio YiMi</Text>
+                                ) : null
+                            }
                         </View>
 
                         <View style={{
@@ -433,8 +536,16 @@ export default class WalletScreen extends React.Component {
                             marginRight: 80,
                             width: 200
                         }}>
-                            <Text>${this.state.out_adeudo_socio_efec} MXN</Text>
-                            <Text>Cuota de socio</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', }}>${this.state.out_adeudo_socio_efec} MXN</Text>
+                                ) : null
+                            }
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', }}>Cuota de socio</Text>
+                                ) : null
+                            }
                         </View>
 
                     </View>
@@ -451,7 +562,11 @@ export default class WalletScreen extends React.Component {
                         }}>
 
                             <View>
-                                <Text>Gana dinero refiriendo</Text>
+                                {
+                                    this.state.fontLoaded ? (
+                                        <Text style={{ fontFamily: 'Aller_Lt', }}>Gana dinero refiriendo</Text>
+                                    ) : null
+                                }
                             </View>
 
                             <View>
@@ -495,7 +610,11 @@ export default class WalletScreen extends React.Component {
                                     color: '#ec6a2c'
                                 }}
                         />
-                        <Text>Inicio</Text>
+                        {
+                            this.state.fontLoaded ? (
+                                <Text style={{ fontFamily: 'Aller_Lt', }}>Inicio</Text>
+                            ) : null
+                        }
                     </View>
 
                     <TouchableOpacity onPress={() => this.props.navigation.navigate("Wallet")}>
@@ -511,7 +630,11 @@ export default class WalletScreen extends React.Component {
                                     color: '#ec6a2c'
                                 }}
                             />
-                            <Text>Mi billetera</Text>
+                            {
+                                this.state.fontLoaded ? (
+                                    <Text style={{ fontFamily: 'Aller_Lt', }}>Mi billetera</Text>
+                                ) : null
+                            }
                         </View>
                     </TouchableOpacity>
 
@@ -528,7 +651,11 @@ export default class WalletScreen extends React.Component {
                                 color: '#ec6a2c'
                             }}
                         />
-                        <Text>Mi perfil</Text>
+                        {
+                            this.state.fontLoaded ? (
+                                <Text style={{ fontFamily: 'Aller_Lt', }}>Mi perfil</Text>
+                            ) : null
+                        }
                     </View>
 
                 </View>
