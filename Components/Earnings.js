@@ -54,7 +54,7 @@ export default class EarningScreen extends React.Component {
 
         }catch(e){
             console.log(e);
-            alert("No hay conexión al web service", "Error");
+            alert("Servicio no disponible, intente más tarde", "Error");
             this.setState({
                 validateWS: false
             });
@@ -71,7 +71,7 @@ export default class EarningScreen extends React.Component {
             });
         }catch(e){
             console.log(e);
-            alert("No hay conexión al web service", "Error");
+            alert("Servicio no disponible, intente más tarde", "Error");
             this.setState({
                 validateWS: false
             });

@@ -50,7 +50,7 @@ export default class TravelScreen extends React.Component {
             });
             this.objToTravels();
         }catch(e){
-            alert("No hay conexión al web service", "Error");
+            alert("Servicio no disponible, intente más tarde", "Error");
             this.setState({
                 validateWS: false
             });

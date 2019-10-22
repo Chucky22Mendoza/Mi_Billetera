@@ -146,7 +146,7 @@ export default class WalletScreen extends React.Component {
             });
         }catch(e){
             console.log(e);
-            alert("No hay conexión al web service", "Error");
+            alert("Servicio no disponible, intente más tarde", "Error");
         }
     }
 
