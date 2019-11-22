@@ -1,21 +1,288 @@
 // In App.js in a new project
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, ActivityIndicator, Alert, RefreshControl } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { Table, Row } from 'react-native-table-component';
 import { Divider } from 'react-native-elements';
 import TopTemplate from './TopTemplate';
 import axios from 'axios';
 import * as Font from 'expo-font';
+import Constants from 'expo-constants';
+
+//Variables para encriptar los datos recibidos
 //const aes256 = require('aes256');
 //var key = "92AE31A79FEEB2A3";
 
+/**
+ *
+ *
+ * @export
+ * @class WalletScreen
+ * @extends {React.Component}
+ */
 export default class WalletScreen extends React.Component {
     constructor(props) {
         super(props);
+        //Variables globales utilizadas en la vista
         this.state = {
-            id_chofer: 1,
+            id_chofer: 1,  //ID del chofer, cambiar según el inicio de sesión del usuario
+            tarjeta_gan: 0,  //Parámetro del WS
+            efectivo_gan: 0,  //Parámetro del WS
+            externo_gan: 0,  //Parámetro del WS
+            total_gan: 0,  //Parámetro del WS
+            total_gan_dia: 0,  //Parámetro del WS
+            cuota_plat_r: 0,  //Parámetro del WS
+            cuota_socio_r: 0,  //Parámetro del WS
+            rango_fechas: '00/00 - 00/00',  //Parámetro del WS
+            cant_servicios: 0,  //Parámetro del WS
+            ganancia_final: 0,  //Parámetro del WS
+            out_adeudo_plataforma_efec: 0,  //Parámetro del WS
+            out_adeudo_socio_efec: 0,  //Parámetro del WS
+            fecha_actual: '',  //Calculado al iniciar la aplicación
+            tiempo_segundos: 0,  //Calculador de tiempo conectado del usuario (Se requiere un método específico)
+            tiempo_minutos: 55,  //Calculador de tiempo conectado del usuario (Se requiere un método específico)
+            tiempo_horas: 10,  //Calculador de tiempo conectado del usuario (Se requiere un método específico)
+            connListItems: [],  //Objeto contenedor de los componentes agregados dinámicamente
+            fontLoaded: false,  //Variable para comprobar las fuentes cargadas
+            switchValue: true,  //Valor del switch para comprobar la conexión del usuario, se calcula en conjunto con el tiempo conectado
+            refreshing: true,  //Refrescar la vista
+            validate_promotion: false, //valor que valida si hay un promoción en la fecha actual
+        };
+    }
+
+    /**
+     *
+     *
+     * @memberof WalletScreen
+     *
+     * Método para comprobar el funcionamiento de botones/iconos
+     *
+     */
+    test = () => {
+        alert("This is a test", "Hola");
+    };
+
+    /**
+     *
+     *
+     * @static
+     * @memberof WalletScreen
+     *
+     * Contenedor de librería: react-navigation-stack, nombre de la vista y sus funcionamiento dentro del proyecto
+     */
+    static navigationOptions = {
+        title: 'Mi Billetera'
+    };
+
+
+    /**
+     *
+     *
+     * @memberof WalletScreen
+     *
+     * Método que ejecuta las peticiones de datos al WS antes de renderizar la vista
+     *
+     */
+    async componentWillMount(){
+        this.principal_body(); //Llamada al método principal que contiene el tratamiento de datos y componentes dinámicos
+        this.principal_body_2(); //Llamada al método principal para comprobar si existen promociones actuales
+    }
+
+    /**
+     *
+     *
+     * @memberof WalletScreen
+     *
+     * Método que se ejecuta después de renderizar la vista; el cual carga las fuentes requeridas
+     */
+    async componentDidMount() {
+        await Font.loadAsync({
+            'Aller_Lt': require('./../assets/fonts/Aller_Lt.ttf'),
+            'Aller_Bd': require('./../assets/fonts/Aller_Bd.ttf'),
+        });
+
+        this.setState({fontLoaded: true});
+    }
+
+    /**
+     *
+     *
+     * @memberof WalletScreen
+     *
+     * Método que contiene el tratamiento de datos y componentes dinámicos, al igual que las peticiones al WS
+     *
+     */
+    principal_body = async () => {
+        let date, day, month, year, fecha;
+        date = new Date();  //Generar objeto de una nueva fecha
+
+        day = date.getDate();  //Obtener el día actual, formato 'DD'
+        month = date.getMonth() + 1;  //Mes actual, se suma uno por su inicializción como objeto en 0, formata 'MM'
+        year = date.getFullYear();  //Obtener el año actual en formato 'YYYY'
+
+        if(day.toString().length == 1 ){
+            day = '0' + day;  //Tratamiento del formato del día
+        }
+
+        if(month.toString().length == 1 ){
+            month = '0' + month;  //tratamiento del formato del mes
+        }
+
+        fecha = day + "/" + month + "/" + year;  //Formato completo de la fecha actual: 'DD/mm/YYYY'
+        this.setState({
+            fecha_actual: fecha  //Actualizar en su variable
+        });
+
+        //Try-catch para manejar error de conexión
+        try{
+            //Variable que contiene los datos de respuesta del WS
+            const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_75/billetera', {
+                id_chofer: this.state.id_chofer
+            }); //Se requiere enviar las variables requeridas por el WS en formato JSON
+
+            //console.log(res.status);
+
+            //Comprobar que la respuesta del WS es correcta
+            if(res.status == 200){
+                //Inicialización de variables necesarias para la reconlacción de los datos
+                let rango_fechas, tarjeta_gan, efectivo_gan, externo_gan, total_gan, total_gan_dia, cuota_plat_r, cuota_socio_r, cant_servicios;
+
+                //Comprobar si la información ha sido encriptada
+                if (res.data.datos[0].encrypt) {
+                    //Desencriptación y asignación a variables de los datos
+                    tarjeta_gan = aes256.decrypt(res.data.datos[0].tarjeta_gan);
+                    efectivo_gan = aes256.decrypt(res.data.datos[0].efectivo_gan);
+                    externo_gan = aes256.decrypt(res.data.datos[0].externo_gan);
+                    total_gan = aes256.decrypt(res.data.datos[0].total_gan);
+                    total_gan_dia = aes256.decrypt(res.data.datos[0].total_gan_dia);
+                    cuota_plat_r = aes256.decrypt(res.data.datos[0].cuota_plat_r);
+                    cuota_socio_r = aes256.decrypt(res.data.datos[0].cuota_socio_r);
+                    rango_fechas = aes256.decrypt(key, res.data.datos[0].rango_fechas);
+                    cant_servicios = aes256.decrypt(res.data.datos[0].cant_servicios);
+                    ganancia_final = aes256.decrypt(res.data.datos[0].ganancia_final);
+                    out_adeudo_plataforma_efec = aes256.decrypt(res.data.datos[0].out_adeudo_plataforma_efec);
+                    out_adeudo_socio_efec = aes256.decrypt(res.data.datos[0].out_adeudo_socio_efec);
+                } else {
+                    //Asignación a variables de los datos
+                    rango_fechas = res.data.datos[0].rango_fechas;
+                    tarjeta_gan = res.data.datos[0].tarjeta_gan;
+                    efectivo_gan = res.data.datos[0].efectivo_gan;
+                    externo_gan = res.data.datos[0].externo_gan;
+                    total_gan = res.data.datos[0].total_gan;
+                    total_gan_dia = res.data.datos[0].total_gan_dia;
+                    cuota_plat_r = res.data.datos[0].cuota_plat_r;
+                    cuota_socio_r = res.data.datos[0].cuota_socio_r;
+                    cant_servicios = res.data.datos[0].cant_servicios;
+                    ganancia_final = res.data.datos[0].ganancia_final;
+                    out_adeudo_plataforma_efec = res.data.datos[0].out_adeudo_plataforma_efec;
+                    out_adeudo_socio_efec = res.data.datos[0].out_adeudo_socio_efec;
+                }
+
+                //Tratamiento de las fechas para obtener sus rangos
+                let obj_semana = rango_fechas.split(' ');  //Separación de la variable en un objeto
+                let fecha_dia_1 = obj_semana[0];  //Día de la primer fecha
+                let fecha_dia_2 = obj_semana[4];  //Día de la segunda fecha
+
+                //Tratamiento del formato del día
+                if (fecha_dia_1.substring(0, 1) == "0") {
+                    fecha_dia_1 = fecha_dia_1.replace('0', '');
+                }
+
+                //Tratamiento del formato del día
+                if (fecha_dia_2.substring(0, 1) == "0") {
+                    fecha_dia_2 = fecha_dia_2.replace('0', '');
+                }
+
+                //Formato del rango de fechas: 'DD de mmm(letra) - DD de mmm(letra)'
+                let semana = fecha_dia_1 + ' ' + obj_semana[1] + ' ' + obj_semana[2] + ' ' + obj_semana[3] + ' ' + fecha_dia_2 + ' ' + obj_semana[5] + ' ' + obj_semana[6];
+
+                //Actualización de las variables con los datos del WS ya tratados
+                this.setState({
+                    tarjeta_gan: tarjeta_gan,
+                    efectivo_gan: efectivo_gan,
+                    externo_gan: externo_gan,
+                    total_gan: total_gan,
+                    total_gan_dia: total_gan_dia,
+                    cuota_plat: cuota_plat_r,
+                    cuota_socio: cuota_socio_r,
+                    rango_fechas: semana,
+                    cant_servicios: cant_servicios,
+                    ganancia_final: ganancia_final,
+                    out_adeudo_plataforma_efec: out_adeudo_plataforma_efec,
+                    out_adeudo_socio_efec: out_adeudo_socio_efec,
+                    refreshing: false
+                });
+            }else{ //Error en el WS
+                alert("Servicio no disponible, intente más tarde", "Error");
+            }
+
+        }catch(error){  //Obtención del error
+            //Error de conexión
+            if(error.message == 'Network Error'){
+                alert("Verifique su conexión e intente nuevamente", "Error");
+            }else{
+                alert("Servicio no disponible, intente más tarde", "Error");
+            }
+
+            console.log(error);
+        }
+    };
+
+    /**
+     *
+     *
+     * @memberof WalletScreen
+     */
+    principal_body_2 = async () => {
+        //Try-catch para manejar error de conexión
+        try{
+            //Variable que contiene los datos de respuesta del WS
+            const res = await axios.post('http://34.95.33.177:3001/usuarios/interfaz_77_78/comprobar_promocion');
+
+            //Comprobar que la respuesta del WS es correcta
+            if(res.status == 200){
+                let res_integer = res.data.out_validate;
+                let validate_promotion;
+                let encrypt = res.data.encrypt;
+
+                if(encrypt){
+                    res_integer = aes256.decrypt(key, res_integer);
+                }
+
+                if(res_integer == 1){
+                    validate_promotion = true;
+                }else{
+                    validate_promotion = false;
+                }
+
+                this.setState({
+                    validate_promotion: validate_promotion,
+                });
+            }else{ //Error en el WS
+                alert("Servicio no disponible, intente más tarde", "Error");
+            }
+        } catch (error) {
+            //Error de conexión
+            if(error.message == 'Network Error'){
+                alert("Verifique su conexión e intente nuevamente", "Error");
+            }else{
+                alert("Servicio no disponible, intente más tarde", "Error");
+            }
+
+            console.log(error);
+        }
+    }
+
+    /**
+     *
+     *
+     * @memberof WalletScreen
+     *
+     * Método para refrescar la vista
+     */
+    onRefresh() {
+        //Limpiamos los datos de la vista para preparar los nuevos en caso de que existan
+        this.setState({
             tarjeta_gan: 0,
             efectivo_gan: 0,
             externo_gan: 0,
@@ -32,132 +299,57 @@ export default class WalletScreen extends React.Component {
             tiempo_segundos: 0,
             tiempo_minutos: 55,
             tiempo_horas: 10,
-            switchValue: true,
-            fontLoaded: false,
             connListItems: [],
-            tableData_1: [
-                [2, '10:55']
-            ],
-            tableData_2: [
-                ['Viajes', 'Tiempo conectado']
-            ]
-        };
+            validate_promotion: false
+        });
+        //Volvemos a ejecutar el método que contiene el tratamiento de los datos y la petición al WS
+        this.principal_body();
+        this.principal_body_2();
     }
 
-    test = () => {
-        alert("This is a test", "Hola");
-    };
-
-    static navigationOptions = {
-        title: 'Mi Billetera'
-    };
-
-
-    async componentDidMount(){
-        await Font.loadAsync({
-            'Aller_Lt': require('./../assets/fonts/Aller_Lt.ttf'),
-            'Aller_Bd': require('./../assets/fonts/Aller_Bd.ttf'),
-        });
-
-        this.setState({fontLoaded: true});
-
-        let date, day, month, year, fecha;
-        date = new Date();
-
-        day = date.getDate();
-        month = date.getMonth() + 1;
-        year = date.getFullYear();
-
-        if(day.toString().length == 1 ){
-            day = '0' + day;
-        }
-
-        if(month.toString().length == 1 ){
-            month = '0' + month;
-        }
-
-        fecha = day + "/" + month + "/" + year;
-        this.setState({
-            fecha_actual: fecha
-        });
-        try{
-            const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_75/billetera', {
-                id_chofer: this.state.id_chofer
-            });
-
-            // handle success
-            let rango_fechas, tarjeta_gan, efectivo_gan, externo_gan, total_gan, total_gan_dia, cuota_plat_r, cuota_socio_r, cant_servicios;
-
-            if(res.data.datos[0].encrypt){
-                tarjeta_gan = aes256.decrypt(res.data.datos[0].tarjeta_gan);
-                efectivo_gan = aes256.decrypt(res.data.datos[0].efectivo_gan);
-                externo_gan = aes256.decrypt(res.data.datos[0].externo_gan);
-                total_gan = aes256.decrypt(res.data.datos[0].total_gan);
-                total_gan_dia = aes256.decrypt(res.data.datos[0].total_gan_dia);
-                cuota_plat_r = aes256.decrypt(res.data.datos[0].cuota_plat_r);
-                cuota_socio_r = aes256.decrypt(res.data.datos[0].cuota_socio_r);
-                rango_fechas = aes256.decrypt(key, res.data.datos[0].rango_fechas);
-                cant_servicios = aes256.decrypt(res.data.datos[0].cant_servicios);
-                ganancia_final = aes256.decrypt(res.data.datos[0].ganancia_final);
-                out_adeudo_plataforma_efec = aes256.decrypt(res.data.datos[0].out_adeudo_plataforma_efec);
-                out_adeudo_socio_efec = aes256.decrypt(res.data.datos[0].out_adeudo_socio_efec);
-            }else{
-                rango_fechas = res.data.datos[0].rango_fechas;
-                tarjeta_gan = res.data.datos[0].tarjeta_gan;
-                efectivo_gan = res.data.datos[0].efectivo_gan;
-                externo_gan = res.data.datos[0].externo_gan;
-                total_gan = res.data.datos[0].total_gan;
-                total_gan_dia = res.data.datos[0].total_gan_dia;
-                cuota_plat_r = res.data.datos[0].cuota_plat_r;
-                cuota_socio_r = res.data.datos[0].cuota_socio_r;
-                cant_servicios = res.data.datos[0].cant_servicios;
-                ganancia_final = res.data.datos[0].ganancia_final;
-                out_adeudo_plataforma_efec = res.data.datos[0].out_adeudo_plataforma_efec;
-                out_adeudo_socio_efec = res.data.datos[0].out_adeudo_socio_efec;
-            }
-
-            let obj_semana = rango_fechas.split(' ');
-            let fecha_dia_1 = obj_semana[0];
-            let fecha_dia_2 = obj_semana[4];
-
-            if (fecha_dia_1.substring(0, 1) == "0") {
-                fecha_dia_1 = fecha_dia_1.replace('0', '');
-            }
-
-            if (fecha_dia_2.substring(0, 1) == "0") {
-                fecha_dia_2 = fecha_dia_2.replace('0', '');
-            }
-
-            let semana = fecha_dia_1 + ' ' + obj_semana[1] + ' ' + obj_semana[2] + ' ' + obj_semana[3] + ' ' + fecha_dia_2 + ' ' + obj_semana[5] + ' ' + obj_semana[6];
-
-            this.setState({
-                tarjeta_gan: tarjeta_gan,
-                efectivo_gan: efectivo_gan,
-                externo_gan: externo_gan,
-                total_gan: total_gan,
-                total_gan_dia: total_gan_dia,
-                cuota_plat: cuota_plat_r,
-                cuota_socio: cuota_socio_r,
-                rango_fechas: semana,
-                cant_servicios: cant_servicios,
-                ganancia_final: ganancia_final,
-                out_adeudo_plataforma_efec: out_adeudo_plataforma_efec,
-                out_adeudo_socio_efec: out_adeudo_socio_efec
-            });
-        }catch(e){
-            console.log(e);
-            alert("Servicio no disponible, intente más tarde", "Error");
-        }
-    }
-
+    /**
+     *
+     *
+     * @returns
+     * @memberof WalletScreen
+     *
+     * Componentes principales
+     *
+     */
     render() {
+
+        //Comprobar el estado de la variable de refrescado
+        if (this.state.refreshing) {
+            return (
+                //Se muestra mientras los datos están siendo recargados
+                <View style={{ flex: 1, paddingTop: 20 }}>
+                    <ActivityIndicator />
+                </View>
+            );
+        }
         return (
             <View>
-                <ScrollView style={{marginBottom: 75}}>
+                <ScrollView style={{ marginBottom: 75 }}
+                    refreshControl={
+                        <RefreshControl
+                            //Componente que hace la petición de refrescado
+                            refreshing={this.state.refreshing}  //Comprobar estado de variable de refrescado
+                            onRefresh={this.onRefresh.bind(this)}  //Refrescar
+                        />
+                    }>
 
+                    {
+                        //Componente que contiene la parte superior de la vista
+                    }
                     <TopTemplate></TopTemplate>
 
-                    <TouchableOpacity onPress={() => this.state.total_gan != 0 ? this.props.navigation.navigate("Earning", { total_gan: this.state.total_gan, id_chofer: this.state.id_chofer, rango_fechas: this.state.rango_fechas }) : Alert('Esperando al servidor', 'Wait')}>
+                    <TouchableOpacity onPress={() =>
+                        //Pasar datos y navegar a la vista de "Earning"
+                        this.props.navigation.navigate("Earning",
+                        { total_gan: this.state.total_gan,
+                            id_chofer: this.state.id_chofer,
+                            rango_fechas: this.state.rango_fechas
+                        })}>
                         <View
                             style={{
                                 height: 70,
@@ -169,6 +361,7 @@ export default class WalletScreen extends React.Component {
 
                             <View style={{ alignItems: 'center', justifyContent: 'flex-end' }}>
                                 {
+                                    //Forma de cargar las fuentes
                                     this.state.fontLoaded ? (
                                         <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15 }}>Ganancias de esta semana</Text>
                                     ) : null
@@ -203,7 +396,12 @@ export default class WalletScreen extends React.Component {
 
                     <Divider style={styles.row}></Divider>
 
-                    <TouchableOpacity onPress={() => this.state.tarjeta_gan != 0 ? this.props.navigation.navigate("Card", { tarjeta_gan: this.state.tarjeta_gan, id_chofer: this.state.id_chofer }) : Alert('Esperando al servidor', 'Wait')}>
+                    <TouchableOpacity onPress={() =>
+                    //Pasar datos y navegar a la vista de "Card"
+                    this.props.navigation.navigate("Card", {
+                        tarjeta_gan: this.state.tarjeta_gan,
+                        id_chofer: this.state.id_chofer
+                        })}>
                         <View style={{
                             height: 25,
                             alignItems: 'center',
@@ -360,7 +558,11 @@ export default class WalletScreen extends React.Component {
 
                     <Divider style={styles.row}></Divider>
 
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate("Travel", {id_chofer: this.state.id_chofer})}>
+                    <TouchableOpacity onPress={() =>
+                    //Pasar datos y navegar a la vista de "Travel"
+                    this.props.navigation.navigate("Travel", {
+                        id_chofer: this.state.id_chofer
+                    })}>
                         <View style={{
                             height: 25,
                             alignItems: 'center',
@@ -552,7 +754,13 @@ export default class WalletScreen extends React.Component {
 
                     <Divider style={styles.row}></Divider>
 
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate("Refer", { id_chofer: this.state.id_chofer })}>
+                    <TouchableOpacity onPress={() => this.state.validate_promotion ?
+                        //Pasar datos y navegar a la vista de "Refer"
+                        this.props.navigation.navigate("Refer", {
+                            id_chofer: this.state.id_chofer
+                        })
+                        : alert('Actualmente no existen promociones validas', 'Atención')
+                    }>
                         <View style={{
                             height: 25,
                             alignItems: 'center',
@@ -617,7 +825,10 @@ export default class WalletScreen extends React.Component {
                         }
                     </View>
 
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate("Wallet")}>
+                    <TouchableOpacity onPress={() =>
+                    //Pasar datos y navegar a la vista de "Wallet"
+                    this.props.navigation.navigate("Wallet")
+                    }>
                         <View style={{
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -666,13 +877,8 @@ export default class WalletScreen extends React.Component {
     }
 }
 
+//Estilos de diseño defenidos
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '#000',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
     row: {
         height: 5,
         backgroundColor: "#f0f4f7"

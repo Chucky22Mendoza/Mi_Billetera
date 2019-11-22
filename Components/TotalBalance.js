@@ -6,6 +6,13 @@ import { Divider } from 'react-native-elements';
 import axios from 'axios';
 import * as Font from 'expo-font';
 
+/**
+ *
+ *
+ * @export
+ * @class TotalBalanceScreen
+ * @extends {React.Component}
+ */
 export default class TotalBalanceScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -19,10 +26,20 @@ export default class TotalBalanceScreen extends React.Component {
         };
     }
 
-    test = () => {
-        alert("This is a test", "Hola");
-    };
+    /**
+     *
+     *
+     * @memberof TotalBalanceScreen
+     */
+    async componentWillMount(){
+        this.principal_body();
+    }
 
+    /**
+     *
+     *
+     * @memberof TotalBalanceScreen
+     */
     async componentDidMount(){
         await Font.loadAsync({
             'Aller_Lt': require('./../assets/fonts/Aller_Lt.ttf'),
@@ -30,7 +47,14 @@ export default class TotalBalanceScreen extends React.Component {
         });
 
         this.setState({fontLoaded: true});
+    }
 
+    /**
+     *
+     *
+     * @memberof TotalBalanceScreen
+     */
+    async principal_body(){
         try{
             const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_79/tarjeta', {
                 id_chofer: this.state.id_chofer
@@ -49,32 +73,38 @@ export default class TotalBalanceScreen extends React.Component {
                 validateWS: false
             });
         }
-
     }
 
+    /**
+     *
+     *
+     * @memberof TotalBalanceScreen
+     */
     objToTotalEarnings = () => {
         const earnings = this.state.objTotalEarnings;
         const obj_aux = [];
 
-        earnings.forEach(earning => {
-            if(earning.encrypt){
-                earning.out_fecha = aes256.decrypt(key, earning.out_fecha);
-                earning.out_id_tran = aes256.decrypt(key, earning.out_id_tran);
-                earning.out_form_pago = aes256.decrypt(key, earning.out_form_pago);
-                earning.out_id_serv = aes256.decrypt(key, earning.out_id_serv);
-                earning.out_total = aes256.decrypt(key, earning.out_total);
-                earning.out_cuota_plat = aes256.decrypt(key, earning.out_cuota_plat);
-                earning.out_cuota_socio = aes256.decrypt(key, earning.out_cuota_socio);
-                earning.out_hora = aes256.decrypt(key, earning.out_hora);
-                earning.out_cupon = aes256.decrypt(key, earning.out_cupon);
-            }
+        if(earnings.length > 0){
+            earnings.forEach(earning => {
+                if (earning.encrypt) {
+                    earning.out_fecha = aes256.decrypt(key, earning.out_fecha);
+                    earning.out_id_tran = aes256.decrypt(key, earning.out_id_tran);
+                    earning.out_form_pago = aes256.decrypt(key, earning.out_form_pago);
+                    earning.out_id_serv = aes256.decrypt(key, earning.out_id_serv);
+                    earning.out_total = aes256.decrypt(key, earning.out_total);
+                    earning.out_cuota_plat = aes256.decrypt(key, earning.out_cuota_plat);
+                    earning.out_cuota_socio = aes256.decrypt(key, earning.out_cuota_socio);
+                    earning.out_hora = aes256.decrypt(key, earning.out_hora);
+                    earning.out_cupon = aes256.decrypt(key, earning.out_cupon);
+                }
 
-            if(!obj_aux.includes(earning.out_fecha)){
-                obj_aux.push(earning.out_fecha);
-            }
+                if (!obj_aux.includes(earning.out_fecha)) {
+                    obj_aux.push(earning.out_fecha);
+                }
 
-            obj_aux.push(earning);
-        });
+                obj_aux.push(earning);
+            });
+        }
 
         this.setState({
             obj_aux_final: obj_aux
@@ -82,6 +112,11 @@ export default class TotalBalanceScreen extends React.Component {
         this.componentBody();
     }
 
+    /**
+     *
+     *
+     * @memberof TotalBalanceScreen
+     */
     componentBody = () =>{
         const obj = this.state.obj_aux_final;
         let obj_items_aux = [];
@@ -222,6 +257,11 @@ export default class TotalBalanceScreen extends React.Component {
         }
     }
 
+    /**
+     *
+     *
+     * @memberof TotalBalanceScreen
+     */
     setInfoWS = () =>{
         return(<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 400, height: 400 }}>
                     <Image
@@ -231,6 +271,12 @@ export default class TotalBalanceScreen extends React.Component {
                 </View>);
     }
 
+    /**
+     *
+     *
+     * @returns
+     * @memberof TotalBalanceScreen
+     */
     render() {
         return (
             <View>
@@ -241,21 +287,8 @@ export default class TotalBalanceScreen extends React.Component {
     }
 }
 
+//Estilos de diseño defenidos
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '#000',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    button: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#DDDDDD',
-        width: 200,
-        padding: 12,
-        borderWidth: 1
-    },
     row: {
         height: 10,
         backgroundColor: "#f0f4f7"

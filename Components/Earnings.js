@@ -9,6 +9,13 @@ import axios from 'axios';
 import * as Font from 'expo-font';
 import { BarChart } from "react-native-chart-kit";
 
+/**
+ *
+ *
+ * @export
+ * @class EarningScreen
+ * @extends {React.Component}
+ */
 export default class EarningScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -27,22 +34,39 @@ export default class EarningScreen extends React.Component {
         };
     }
 
-    test = () => {
-        alert("This is a test", "Hola");
-    };
-
     static navigationOptions = {
         title: 'Ganancias'
     };
 
+    /**
+     *
+     *
+     * @memberof EarningScreen
+     */
+    async componentWillMount(){
+        this.principal_body();
+    }
+
+    /**
+     *
+     *
+     * @memberof EarningScreen
+     */
     async componentDidMount(){
         await Font.loadAsync({
             'Aller_Lt': require('./../assets/fonts/Aller_Lt.ttf'),
         });
 
         this.setState({fontLoaded: true});
+    }
 
-        try{
+    /**
+     *
+     *
+     * @memberof EarningScreen
+     */
+    async principal_body(){
+        try {
             const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_78_2/ganancias', {
                 id_chofer: this.state.id_chofer
             });
@@ -52,14 +76,14 @@ export default class EarningScreen extends React.Component {
                 validateWS: true
             });
 
-        }catch(e){
+        } catch (e) {
             console.log(e);
             alert("Servicio no disponible, intente más tarde", "Error");
             this.setState({
                 validateWS: false
             });
         }
-        try{
+        try {
 
             const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_78/ganancias', {
                 id_chofer: this.state.id_chofer
@@ -69,7 +93,7 @@ export default class EarningScreen extends React.Component {
                 objEarnings: obj,
                 validateWS: true
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
             alert("Servicio no disponible, intente más tarde", "Error");
             this.setState({
@@ -80,6 +104,11 @@ export default class EarningScreen extends React.Component {
         this.objToEarnings();
     }
 
+    /**
+     *
+     *
+     * @memberof EarningScreen
+     */
     objToTotalEarnings = () => {
         const earningTotal = this.state.objTotalEarnings;
         const obj_total = [];
@@ -122,6 +151,11 @@ export default class EarningScreen extends React.Component {
 
     }
 
+    /**
+     *
+     *
+     * @memberof EarningScreen
+     */
     objToEarnings = () => {
         const earnings = this.state.objEarnings;
         const obj_aux = [];
@@ -151,6 +185,11 @@ export default class EarningScreen extends React.Component {
         this.componentBody();
     }
 
+    /**
+     *
+     *
+     * @memberof EarningScreen
+     */
     componentBody = () =>{
         const obj = this.state.obj_aux_final;
         let obj_items_aux = [];
@@ -266,6 +305,11 @@ export default class EarningScreen extends React.Component {
         }
     }
 
+    /**
+     *
+     *
+     * @memberof EarningScreen
+     */
     setInfoWS = () =>{
         return(<View style={{
                     flex: 1,
@@ -281,6 +325,11 @@ export default class EarningScreen extends React.Component {
                 </View>);
     }
 
+    /**
+     *
+     *
+     * @memberof EarningScreen
+     */
     getCentavos = (numberValue) =>{
         if(numberValue == '' || numberValue == null){
             numberValue = 0;
@@ -297,6 +346,12 @@ export default class EarningScreen extends React.Component {
         return outValue;
     }
 
+    /**
+     *
+     *
+     * @returns
+     * @memberof EarningScreen
+     */
     render() {
         const data = {
             labels: this.state.obj_fechas,
@@ -364,13 +419,8 @@ export default class EarningScreen extends React.Component {
     }
 }
 
+//Estilos de diseño defenidos
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '#000',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
     row: {
         height: 10,
         backgroundColor: "#f0f4f7"

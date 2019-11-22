@@ -10,6 +10,13 @@ import axios from 'axios';
 import { Table, Row, Rows } from 'react-native-table-component';
 import * as Font from 'expo-font';
 
+/**
+ *
+ *
+ * @export
+ * @class TravelScreen
+ * @extends {React.Component}
+ */
 export default class TravelScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -23,14 +30,30 @@ export default class TravelScreen extends React.Component {
         };
     }
 
-    test = () => {
-        alert("This is a test", "Hola");
-    };
-
+    /**
+     *
+     *
+     * @static
+     * @memberof TravelScreen
+     */
     static navigationOptions = {
         title: 'Ver viajes'
     };
 
+    /**
+     *
+     *
+     * @memberof TravelScreen
+     */
+    async componentWillMount(){
+        this.principal_body();
+    }
+
+    /**
+     *
+     *
+     * @memberof TravelScreen
+     */
     async componentDidMount(){
         await Font.loadAsync({
             'Aller_Lt': require('./../assets/fonts/Aller_Lt.ttf'),
@@ -38,7 +61,14 @@ export default class TravelScreen extends React.Component {
         });
 
         this.setState({fontLoaded: true});
+    }
 
+    /**
+     *
+     *
+     * @memberof TravelScreen
+     */
+    async principal_body(){
         try{
             const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_81/verviajes', {
                 id_chofer: this.state.id_chofer
@@ -55,9 +85,13 @@ export default class TravelScreen extends React.Component {
                 validateWS: false
             });
         }
-
     }
 
+    /**
+     *
+     *
+     * @memberof TravelScreen
+     */
     objToTravels = () => {
         const travels = this.state.objTravels;
         const obj_aux = [];
@@ -88,6 +122,11 @@ export default class TravelScreen extends React.Component {
         this.componentBody();
     }
 
+    /**
+     *
+     *
+     * @memberof TravelScreen
+     */
     componentBody = () =>{
         const obj = this.state.obj_aux_final;
         let obj_items_aux = [];
@@ -169,6 +208,12 @@ export default class TravelScreen extends React.Component {
                 </View>);
     }
 
+    /**
+     *
+     *
+     * @returns
+     * @memberof TravelScreen
+     */
     render() {
         return (
             <ScrollView>
@@ -200,21 +245,9 @@ export default class TravelScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '#000',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     row: {
         height: 5,
         backgroundColor: "#f0f4f7"
-    },
-    head: {
-        height: 40,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingLeft: 30
     },
     text: {
         fontSize: 14,

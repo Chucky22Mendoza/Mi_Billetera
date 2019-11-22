@@ -1,23 +1,40 @@
 // In App.js in a new project
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Picker } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Picker, Clipboard } from 'react-native';
 import * as Font from 'expo-font';
+import axios from 'axios';
 
+/**
+ *
+ *
+ * @export
+ * @class ReferDriversScreen
+ * @extends {React.Component}
+ */
 export default class ReferDriversScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             city: '',
+            cities: [],
+            fecha_inicio: this.props.fecha_inicio,  //Obtener fecha_inicio enviado por la vista anterior
+            fecha_termino: this.props.fecha_termino,
+            ciudad: this.props.ciudad,
+            obj_items: [],
             fontLoaded: false,
+            code_driver: null,
+            clipboardContent: null,
+            encrypt: false
         };
     }
 
-    test = () => {
-        alert("This is a test", "Hola");
-    };
-
-    async componentDidMount(){
+    /**
+     *
+     *
+     * @memberof ReferDriversScreen
+     */
+    componentDidMount = async () => {
         await Font.loadAsync({
             'Aller_Lt': require('./../assets/fonts/Aller_Lt.ttf'),
         });
@@ -25,6 +42,93 @@ export default class ReferDriversScreen extends React.Component {
         this.setState({fontLoaded: true});
     }
 
+    /**
+     *
+     *
+     * @memberof ReferDriversScreen
+     */
+    componentWillMount = () => {
+        this.principal_body();
+        this.principal_body_2();
+    }
+
+    /**
+     *
+     *
+     * @memberof ReferDriversScreen
+     */
+    principal_body = async () => {
+        try{
+            const res = await axios.get('http://34.95.33.177:3001/codigo_chofer');
+            let code = res.data;
+            this.setState({
+                code_driver: code
+            });
+        }catch(e){
+            console.log(e);
+            alert("Servicio no disponible, intente más tarde", "Error");
+        }
+    }
+
+    /**
+     *
+     *
+     * @memberof ReferDriversScreen
+     */
+    principal_body_2 = async () => {
+        try{
+            const res = await axios.post('http://34.95.33.177:3001/usuarios/interfaz_77/ciudad');
+            let cities = res.data.datos;
+            let encrypt = res.data.encrypt;
+            this.setState({
+                cities: cities,
+                encrypt: encrypt
+            });
+            this.componentBody();
+        }catch(e){
+            console.log(e);
+            alert("Servicio no disponible, intente más tarde", "Error");
+        }
+    }
+
+
+    /**
+     *
+     *
+     * @memberof ReferDriversScreen
+     */
+    componentBody = () => {
+        let cities = this.state.cities;
+        let obj_items_aux = [];
+        cities.forEach((city, index) => {
+            if(this.state.encrypt){
+                city.id_ciudad = aes256.decrypt(key, city.id_ciudad);
+                city.nombre_ciudad = aes256.decrypt(key, city.nombre_ciudad);
+            }
+            obj_items_aux.push(<Picker.Item key={"item_picker_" + index} label={city.nombre_ciudad} value={city.id_ciudad}/>);
+        });
+
+        this.setState({
+            obj_items: obj_items_aux
+        });
+    }
+
+    /**
+     *
+     *
+     * @memberof ReferDriversScreen
+     */
+    writeToClipboard = async () => {
+        await Clipboard.setString(this.state.code_driver);
+        alert('Copiado al portapapeles');
+    };
+
+    /**
+     *
+     *
+     * @returns
+     * @memberof ReferDriversScreen
+     */
     render() {
         return (
             <View>
@@ -44,8 +148,7 @@ export default class ReferDriversScreen extends React.Component {
                                     onValueChange={(itemValue, itemIndex) =>
                                         this.setState({ city: itemValue })
                                     }>
-                                    <Picker.Item label="Colima" value="Colima" />
-                                    <Picker.Item label="Jalisco" value="Jalisco" />
+                                    { this.state.obj_items }
                                 </Picker>
                             ) : null
                         }
@@ -53,15 +156,15 @@ export default class ReferDriversScreen extends React.Component {
                 </View>
                 {
                     this.state.fontLoaded ? (
-                        <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15, marginHorizontal: 30, marginVertical: 5 }}>Refiere a tu amigo entre DD/MM/AAAA y DD/MM/AAAA</Text>
+                        <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15, marginHorizontal: 30, marginVertical: 5 }}>Refiere a tu amigo entre {this.state.fecha_inicio} y {this.state.fecha_termino}</Text>
                     ) : null
                 }
                 {
                     this.state.fontLoaded ? (
-                        <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15, marginHorizontal: 30, marginVertical: 5 }}>Asegura que tu amigo seleccione Colima al registrarse</Text>
+                        <Text style={{ fontFamily: 'Aller_Lt', fontSize: 15, marginHorizontal: 30, marginVertical: 5 }}>Asegura que tu amigo seleccione {this.state.ciudad} al registrarse</Text>
                     ) : null
                 }
-                <TouchableOpacity style={styles.buttonLink} onPress={this.test}>
+                <TouchableOpacity style={styles.buttonLink} onPress={this.writeToClipboard}>
                     {
                         this.state.fontLoaded ? (
                             <Text style={{ fontFamily: 'Aller_Lt' }}>Obtener enlace</Text>
@@ -74,23 +177,8 @@ export default class ReferDriversScreen extends React.Component {
     }
 }
 
+//Estilos de diseño defenidos
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '#000',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    row: {
-        height: 10,
-        backgroundColor: "#f0f4f7"
-    },
-    button: {
-        alignItems: 'center',
-        backgroundColor: '#DDDDDD',
-        padding: 10,
-        marginHorizontal: 10
-    },
     buttonLink: {
         alignItems: 'center',
         justifyContent: 'center',

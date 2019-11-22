@@ -4,15 +4,29 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import { Divider } from 'react-native-elements';
 import * as Font from 'expo-font';
 
+/**
+ *
+ *
+ * @export
+ * @class ExtraTemplate
+ * @extends {React.Component}
+ *
+ */
 export default class ExtraTemplate extends React.Component {
     constructor(props) {
         super(props);
+        //Variables globales
         this.state = {
             switchValue: true,
             fontLoaded: false,
         };
     }
 
+    /**
+     *
+     *
+     * @memberof ExtraTemplate
+     */
     async componentDidMount(){
         await Font.loadAsync({
             'Aller_Lt': require('./../assets/fonts/Aller_Lt.ttf'),
@@ -21,10 +35,21 @@ export default class ExtraTemplate extends React.Component {
         this.setState({fontLoaded: true});
     }
 
+    /**
+     *
+     *
+     * @memberof ExtraTemplate
+     */
     test = () => {
         alert("This is a test", "Hola");
     };
 
+    /**
+     *
+     *
+     * @returns
+     * @memberof ExtraTemplate
+     */
     render() {
         return (
             <View>
@@ -75,13 +100,8 @@ export default class ExtraTemplate extends React.Component {
     }
 }
 
+//Estilos de diseño defenidos
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '#000',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
     row: {
         height: 10,
         backgroundColor: "#f0f4f7"

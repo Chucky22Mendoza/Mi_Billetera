@@ -1,20 +1,14 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import {
-  createAppContainer,
-  StackActions,
-  NavigationActions,
-  SafeAreaView
-} from "react-navigation";
+import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
-import { createDrawerNavigator } from "react-navigation-drawer";
 
-import WalletScreen from './Components/My_Wallet';
-import CardScreen from './Components/Card'
-import EarningScreen from './Components/Earnings';
-import TravelScreen from './Components/Travels';
-import ReferScreen from './Components/Refer';
+import WalletScreen from './Components/My_Wallet';  //Vista de mi billetera
+import CardScreen from './Components/Card'  //Vista de Tarjeta
+import EarningScreen from './Components/Earnings';  //Vista de ganancias
+import TravelScreen from './Components/Travels';  //Vista de ver viajes
+import ReferScreen from './Components/Refer';  //Vista de referidos
 
+//Conjunto principal que maneja la navegación de las vistas acorde a la librería react-navigation-stack
 const MainStack = createStackNavigator({
   Wallet : { screen: WalletScreen },
   Card : { screen: CardScreen },
@@ -36,6 +30,15 @@ const MainStack = createStackNavigator({
 
 const AppContainer = createAppContainer(MainStack);
 
+/**
+ *
+ *
+ * @export
+ * @class App
+ * @extends {React.Component}
+ *
+ * Clase principal de la aplicación
+ */
 export default class App extends React.Component {
   render() {
     return <AppContainer />;
