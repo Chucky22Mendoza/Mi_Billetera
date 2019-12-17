@@ -13,6 +13,11 @@ import axios from 'axios';
  * @extends {React.Component}
  */
 export default class ReferPassangerScreen extends React.Component {
+    /**
+     *Creates an instance of ReferPassangerScreen.
+     * @param {*} props
+     * @memberof ReferPassangerScreen
+     */
     constructor(props) {
         super(props);
         this.state = {
@@ -56,14 +61,23 @@ export default class ReferPassangerScreen extends React.Component {
      */
     principal_body = async () => {
         try{
-            const res = await axios.get('http://34.95.33.177:3001/codigo_usuario');
-            let code = res.data;
-            this.setState({
-                code_user: code
-            });
-        }catch(e){
-            console.log(e);
-            alert("Servicio no disponible, intente más tarde", "Error");
+            const res = await axios.get('http://35.203.42.33:3001/codigo_usuario');
+            if(res.status == 200){
+                let code = res.data;
+                this.setState({
+                    code_user: code
+                });
+            }else{
+                alert("Servicio no disponible, intente más tarde", "Error");
+            }
+        }catch(error){
+            //Error de conexión
+            if(error.message == 'Network Error'){
+                alert("Verifique su conexión e intente nuevamente", "Error");
+            }else{
+                alert("Servicio no disponible, intente más tarde", "Error");
+            }
+            console.log(error);
         }
     }
 

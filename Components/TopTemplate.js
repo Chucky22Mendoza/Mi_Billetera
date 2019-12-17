@@ -1,3 +1,13 @@
+// In App.js in a new project
+
+/**
+ *
+ * TOPTEMPLATE es un componente utilizado para la parte superior de la aplicación
+ * Este aún no ha sido implementado en la aplicación, pero será de utilidad cuando
+ * se requiera integrar la aplicación completa
+ *
+ **/
+
 import React from 'react';
 import { View, Text, StyleSheet, Button, Switch } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome5";
@@ -13,6 +23,10 @@ import * as Font from 'expo-font';
  *
  */
 export default class ExtraTemplate extends React.Component {
+    /**
+     *
+     * @param {*} props 
+     */
     constructor(props) {
         super(props);
         //Variables globales

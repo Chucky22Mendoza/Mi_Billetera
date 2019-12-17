@@ -13,6 +13,11 @@ import axios from 'axios';
  * @extends {React.Component}
  */
 export default class ReferDriversScreen extends React.Component {
+    /**
+     *Creates an instance of ReferDriversScreen.
+     * @param {*} props
+     * @memberof ReferDriversScreen
+     */
     constructor(props) {
         super(props);
         this.state = {
@@ -59,14 +64,23 @@ export default class ReferDriversScreen extends React.Component {
      */
     principal_body = async () => {
         try{
-            const res = await axios.get('http://34.95.33.177:3001/codigo_chofer');
-            let code = res.data;
-            this.setState({
-                code_driver: code
-            });
-        }catch(e){
-            console.log(e);
-            alert("Servicio no disponible, intente más tarde", "Error");
+            const res = await axios.get('http://35.203.42.33:3001/codigo_chofer');
+            if(res.status == 200){
+                let code = res.data;
+                this.setState({
+                    code_driver: code
+                });
+            }else{
+                alert("Servicio no disponible, intente más tarde", "Error");
+            }
+        }catch(error){
+            //Error de conexión
+            if(error.message == 'Network Error'){
+                alert("Verifique su conexión e intente nuevamente", "Error");
+            }else{
+                alert("Servicio no disponible, intente más tarde", "Error");
+            }
+            console.log(error);
         }
     }
 
@@ -77,17 +91,26 @@ export default class ReferDriversScreen extends React.Component {
      */
     principal_body_2 = async () => {
         try{
-            const res = await axios.post('http://34.95.33.177:3001/usuarios/interfaz_77/ciudad');
-            let cities = res.data.datos;
-            let encrypt = res.data.encrypt;
-            this.setState({
-                cities: cities,
-                encrypt: encrypt
-            });
-            this.componentBody();
-        }catch(e){
-            console.log(e);
-            alert("Servicio no disponible, intente más tarde", "Error");
+            const res = await axios.post('http://35.203.42.33:3001/usuarios/interfaz_77/ciudad');
+            if(res.status == 200){
+                let cities = res.data.datos;
+                let encrypt = res.data.encrypt;
+                this.setState({
+                    cities: cities,
+                    encrypt: encrypt
+                });
+                this.componentBody();
+            }else{
+                alert("Servicio no disponible, intente más tarde", "Error");
+            }
+        }catch(error){
+            //Error de conexión
+            if(error.message == 'Network Error'){
+                alert("Verifique su conexión e intente nuevamente", "Error");
+            }else{
+                alert("Servicio no disponible, intente más tarde", "Error");
+            }
+            console.log(error);
         }
     }
 

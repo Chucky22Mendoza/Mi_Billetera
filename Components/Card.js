@@ -17,6 +17,11 @@ import * as Font from 'expo-font';
  * Vista que intercala entre las vistas de balance
  */
 export default class CardScreen extends React.Component {
+    /**
+     *Creates an instance of CardScreen.
+     * @param {*} props
+     * @memberof CardScreen
+     */
     constructor(props) {
         super(props);
         //Variables globales utilizadas en la vista

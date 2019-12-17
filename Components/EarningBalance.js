@@ -14,6 +14,11 @@ import * as Font from 'expo-font';
  * @extends {React.Component}
  */
 export default class EarningBalanceScreen extends React.Component {
+    /**
+     *Creates an instance of EarningBalanceScreen.
+     * @param {*} props
+     * @memberof EarningBalanceScreen
+     */
     constructor(props) {
         super(props);
         //Variables globales utilizadas en la vista
@@ -81,7 +86,7 @@ export default class EarningBalanceScreen extends React.Component {
         //Try-catch para manejar error de conexión
         try{
             //Variable que contiene los datos de respuesta del WS
-            const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_80/tarjeta', {
+            const res = await axios.post('http://35.203.42.33:3001/billetera/interfaz_80/tarjeta', {
                 id_chofer: this.state.id_chofer
             }); //Se requiere enviar las variables requeridas por el WS en formato JSON
 

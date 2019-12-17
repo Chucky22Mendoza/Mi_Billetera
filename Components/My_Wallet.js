@@ -21,6 +21,11 @@ import Constants from 'expo-constants';
  * @extends {React.Component}
  */
 export default class WalletScreen extends React.Component {
+    /**
+     *Creates an instance of WalletScreen.
+     * @param {*} props
+     * @memberof WalletScreen
+     */
     constructor(props) {
         super(props);
         //Variables globales utilizadas en la vista
@@ -113,6 +118,8 @@ export default class WalletScreen extends React.Component {
      *
      */
     principal_body = async () => {
+        /******* Calcular fecha actual formateada ******/
+
         let date, day, month, year, fecha;
         date = new Date();  //Generar objeto de una nueva fecha
 
@@ -133,10 +140,12 @@ export default class WalletScreen extends React.Component {
             fecha_actual: fecha  //Actualizar en su variable
         });
 
+        /******* Calcular fecha actual formateada ******/
+
         //Try-catch para manejar error de conexión
         try{
             //Variable que contiene los datos de respuesta del WS
-            const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_75/billetera', {
+            const res = await axios.post('http://35.203.42.33:3001/billetera/interfaz_75/billetera', {
                 id_chofer: this.state.id_chofer
             }); //Se requiere enviar las variables requeridas por el WS en formato JSON
 
@@ -237,7 +246,7 @@ export default class WalletScreen extends React.Component {
         //Try-catch para manejar error de conexión
         try{
             //Variable que contiene los datos de respuesta del WS
-            const res = await axios.post('http://34.95.33.177:3001/usuarios/interfaz_77_78/comprobar_promocion');
+            const res = await axios.post('http://35.203.42.33:3001/usuarios/interfaz_77_78/comprobar_promocion');
 
             //Comprobar que la respuesta del WS es correcta
             if(res.status == 200){

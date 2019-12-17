@@ -17,6 +17,11 @@ import { BarChart } from "react-native-chart-kit";
  * @extends {React.Component}
  */
 export default class EarningScreen extends React.Component {
+    /**
+     *Creates an instance of EarningScreen.
+     * @param {*} props
+     * @memberof EarningScreen
+     */
     constructor(props) {
         super(props);
         this.state = {
@@ -34,6 +39,12 @@ export default class EarningScreen extends React.Component {
         };
     }
 
+    /**
+     *
+     *
+     * @static
+     * @memberof EarningScreen
+     */
     static navigationOptions = {
         title: 'Ganancias'
     };
@@ -67,35 +78,59 @@ export default class EarningScreen extends React.Component {
      */
     async principal_body(){
         try {
-            const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_78_2/ganancias', {
+            const res = await axios.post('http://35.203.42.33:3001/billetera/interfaz_78_2/ganancias', {
                 id_chofer: this.state.id_chofer
             });
-            const obj = res.data.datos;
-            this.setState({
-                objTotalEarnings: obj,
-                validateWS: true
-            });
+            if(res.status == 200){
+                const obj = res.data.datos;
+                this.setState({
+                    objTotalEarnings: obj,
+                    validateWS: true
+                });
+            }else{
+                alert("Servicio no disponible, intente más tarde", "Error");
+                this.setState({
+                    validateWS: false
+                });
+            }
 
-        } catch (e) {
-            console.log(e);
-            alert("Servicio no disponible, intente más tarde", "Error");
+        } catch (error) {
+            //Error de conexión
+            if(error.message == 'Network Error'){
+                alert("Verifique su conexión e intente nuevamente", "Error");
+            }else{
+                alert("Servicio no disponible, intente más tarde", "Error");
+            }
+            console.log(error);
             this.setState({
                 validateWS: false
             });
         }
         try {
 
-            const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_78/ganancias', {
+            const res = await axios.post('http://35.203.42.33:3001/billetera/interfaz_78/ganancias', {
                 id_chofer: this.state.id_chofer
             });
-            const obj = res.data.datos;
-            this.setState({
-                objEarnings: obj,
-                validateWS: true
-            });
-        } catch (e) {
-            console.log(e);
-            alert("Servicio no disponible, intente más tarde", "Error");
+            if(res.status == 200){
+                const obj = res.data.datos;
+                this.setState({
+                    objEarnings: obj,
+                    validateWS: true
+                });
+            }else{
+                alert("Servicio no disponible, intente más tarde", "Error");
+                this.setState({
+                    validateWS: false
+                });
+            }
+        } catch (error) {
+            //Error de conexión
+            if(error.message == 'Network Error'){
+                alert("Verifique su conexión e intente nuevamente", "Error");
+            }else{
+                alert("Servicio no disponible, intente más tarde", "Error");
+            }
+            console.log(error);
             this.setState({
                 validateWS: false
             });
@@ -328,9 +363,11 @@ export default class EarningScreen extends React.Component {
     /**
      *
      *
+     * @param {*} numberValue
+     * @returns
      * @memberof EarningScreen
      */
-    getCentavos = (numberValue) =>{
+    getCentavos(numberValue) {
         if(numberValue == '' || numberValue == null){
             numberValue = 0;
         }

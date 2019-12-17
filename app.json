@@ -28,6 +28,8 @@
     },
     "android": {
       "package": "com.kiotrack.mi_billetera"
-    }
+    },
+    "description": "Nueva Dirección IP",
+    "githubUrl": "https://github.com/Chucky22Mendoza/Mi_Billetera"
   }
 }

@@ -18,6 +18,11 @@ import * as Font from 'expo-font';
  * @extends {React.Component}
  */
 export default class TravelScreen extends React.Component {
+    /**
+     *Creates an instance of TravelScreen.
+     * @param {*} props
+     * @memberof TravelScreen
+     */
     constructor(props) {
         super(props);
         this.state = {
@@ -70,17 +75,30 @@ export default class TravelScreen extends React.Component {
      */
     async principal_body(){
         try{
-            const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_81/verviajes', {
+            const res = await axios.post('http://35.203.42.33:3001/billetera/interfaz_81/verviajes', {
                 id_chofer: this.state.id_chofer
             });
-            const obj = res.data.datos;
-            this.setState({
-                objTravels: obj,
-                validateWS: true
-            });
-            this.objToTravels();
-        }catch(e){
-            alert("Servicio no disponible, intente más tarde", "Error");
+            if(res.status == 200){
+                const obj = res.data.datos;
+                this.setState({
+                    objTravels: obj,
+                    validateWS: true
+                });
+                this.objToTravels();
+            }else{
+                alert("Servicio no disponible, intente más tarde", "Error");
+                this.setState({
+                    validateWS: false
+                });
+            }
+        }catch(error){
+            //Error de conexión
+            if(error.message == 'Network Error'){
+                alert("Verifique su conexión e intente nuevamente", "Error");
+            }else{
+                alert("Servicio no disponible, intente más tarde", "Error");
+            }
+            console.log(error);
             this.setState({
                 validateWS: false
             });
@@ -199,6 +217,11 @@ export default class TravelScreen extends React.Component {
         }
     }
 
+    /**
+     *
+     *
+     * @memberof TravelScreen
+     */
     setInfoWS = () =>{
         return(<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: 400, height: 400 }}>
                     <Image

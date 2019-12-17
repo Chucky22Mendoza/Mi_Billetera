@@ -14,6 +14,11 @@ import * as Font from 'expo-font';
  * @extends {React.Component}
  */
 export default class TotalBalanceScreen extends React.Component {
+    /**
+     *Creates an instance of TotalBalanceScreen.
+     * @param {*} props
+     * @memberof TotalBalanceScreen
+     */
     constructor(props) {
         super(props);
         this.state = {
@@ -56,19 +61,31 @@ export default class TotalBalanceScreen extends React.Component {
      */
     async principal_body(){
         try{
-            const res = await axios.post('http://34.95.33.177:3001/billetera/interfaz_79/tarjeta', {
+            const res = await axios.post('http://35.203.42.33:3001/billetera/interfaz_79/tarjeta', {
                 id_chofer: this.state.id_chofer
             });
-            const obj = res.data.datos;
-            this.setState({
-                objTotalEarnings: obj,
-                validateWS: true
-            });
-            this.objToTotalEarnings();
+            if(res.status == 200){
+                const obj = res.data.datos;
+                this.setState({
+                    objTotalEarnings: obj,
+                    validateWS: true
+                });
+                this.objToTotalEarnings();
+            }else{
+                alert("Servicio no disponible, intente más tarde", "Error");
+                this.setState({
+                    validateWS: false
+                });
+            }
 
-        }catch(e){
-            console.log(e);
-            alert("Servicio no disponible, intente más tarde", "Error");
+        }catch(error){
+            //Error de conexión
+            if(error.message == 'Network Error'){
+                alert("Verifique su conexión e intente nuevamente", "Error");
+            }else{
+                alert("Servicio no disponible, intente más tarde", "Error");
+            }
+            console.log(error);
             this.setState({
                 validateWS: false
             });
