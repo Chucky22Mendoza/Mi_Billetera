@@ -1,7 +1,7 @@
 // In App.js in a new project
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, ActivityIndicator, Alert, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, ActivityIndicator, Alert, RefreshControl, Dimensions } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { Divider } from 'react-native-elements';
 import TopTemplate from './TopTemplate';
@@ -52,6 +52,8 @@ export default class WalletScreen extends React.Component {
             switchValue: true,  //Valor del switch para comprobar la conexión del usuario, se calcula en conjunto con el tiempo conectado
             refreshing: true,  //Refrescar la vista
             validate_promotion: false, //valor que valida si hay un promoción en la fecha actual
+            width_window: Dimensions.get("window").width,
+            height_window: Dimensions.get("window").height,
         };
     }
 
@@ -803,8 +805,9 @@ export default class WalletScreen extends React.Component {
                 </ScrollView>
 
                 <View style={{
-                    height: 90,
-                    marginTop: 475,
+                    height: (this.state.height_window*13)/100,
+                    width: this.state.width_window,
+                    marginTop: this.state.height_window - (this.state.height_window*26)/100,
                     paddingTop: 5,
                     position: 'absolute',
                     flexDirection: 'row',
