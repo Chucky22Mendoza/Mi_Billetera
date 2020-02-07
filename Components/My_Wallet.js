@@ -30,7 +30,7 @@ export default class WalletScreen extends React.Component {
         super(props);
         //Variables globales utilizadas en la vista
         this.state = {
-            id_chofer: 1,  //ID del chofer, cambiar según el inicio de sesión del usuario
+            id_chofer: 2,  //ID del chofer, cambiar según el inicio de sesión del usuario
             tarjeta_gan: 0,  //Parámetro del WS
             efectivo_gan: 0,  //Parámetro del WS
             externo_gan: 0,  //Parámetro del WS
