@@ -72,7 +72,7 @@ export default class ReferScreen extends React.Component {
      */
     principal_body = async () => {
         try{
-            const res = await axios.post('http://35.203.42.33:3001/usuarios/interfaz_77_78/obtener_promocion');
+            const res = await axios.post('http://35.203.57.92:3001/usuarios/interfaz_77_78/obtener_promocion');
             if(res.status == 200){
                 let out_id_promocion, out_nombre_promocion, out_condiciones, out_frase_motivacional, out_fecha_inicio, out_fecha_termino, out_hora_inicio, out_hora_termino, out_ciudad, out_beneficio;
                 //Comprobar si la información ha sido encriptada

@@ -147,7 +147,7 @@ export default class WalletScreen extends React.Component {
         //Try-catch para manejar error de conexión
         try{
             //Variable que contiene los datos de respuesta del WS
-            const res = await axios.post('http://35.203.42.33:3001/billetera/interfaz_75/billetera', {
+            const res = await axios.post('http://35.203.57.92:3001/billetera/interfaz_75/billetera', {
                 id_chofer: this.state.id_chofer
             }); //Se requiere enviar las variables requeridas por el WS en formato JSON
 
@@ -248,7 +248,7 @@ export default class WalletScreen extends React.Component {
         //Try-catch para manejar error de conexión
         try{
             //Variable que contiene los datos de respuesta del WS
-            const res = await axios.post('http://35.203.42.33:3001/usuarios/interfaz_77_78/comprobar_promocion');
+            const res = await axios.post('http://35.203.57.92:3001/usuarios/interfaz_77_78/comprobar_promocion');
 
             //Comprobar que la respuesta del WS es correcta
             if(res.status == 200){

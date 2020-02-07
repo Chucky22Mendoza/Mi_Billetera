@@ -75,7 +75,7 @@ export default class TravelScreen extends React.Component {
      */
     async principal_body(){
         try{
-            const res = await axios.post('http://35.203.42.33:3001/billetera/interfaz_81/verviajes', {
+            const res = await axios.post('http://35.203.57.92:3001/billetera/interfaz_81/verviajes', {
                 id_chofer: this.state.id_chofer
             });
             if(res.status == 200){

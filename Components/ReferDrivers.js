@@ -64,7 +64,7 @@ export default class ReferDriversScreen extends React.Component {
      */
     principal_body = async () => {
         try{
-            const res = await axios.get('http://35.203.42.33:3001/codigo_chofer');
+            const res = await axios.get('http://35.203.57.92:3001/codigo_chofer');
             if(res.status == 200){
                 let code = res.data;
                 this.setState({
@@ -91,7 +91,7 @@ export default class ReferDriversScreen extends React.Component {
      */
     principal_body_2 = async () => {
         try{
-            const res = await axios.post('http://35.203.42.33:3001/usuarios/interfaz_77/ciudad');
+            const res = await axios.post('http://35.203.57.92:3001/usuarios/interfaz_77/ciudad');
             if(res.status == 200){
                 let cities = res.data.datos;
                 let encrypt = res.data.encrypt;

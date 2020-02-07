@@ -78,7 +78,7 @@ export default class EarningScreen extends React.Component {
      */
     async principal_body(){
         try {
-            const res = await axios.post('http://35.203.42.33:3001/billetera/interfaz_78_2/ganancias', {
+            const res = await axios.post('http://35.203.57.92:3001/billetera/interfaz_78_2/ganancias', {
                 id_chofer: this.state.id_chofer
             });
             if(res.status == 200){
@@ -108,7 +108,7 @@ export default class EarningScreen extends React.Component {
         }
         try {
 
-            const res = await axios.post('http://35.203.42.33:3001/billetera/interfaz_78/ganancias', {
+            const res = await axios.post('http://35.203.57.92:3001/billetera/interfaz_78/ganancias', {
                 id_chofer: this.state.id_chofer
             });
             if(res.status == 200){

@@ -86,7 +86,7 @@ export default class EarningBalanceScreen extends React.Component {
         //Try-catch para manejar error de conexión
         try{
             //Variable que contiene los datos de respuesta del WS
-            const res = await axios.post('http://35.203.42.33:3001/billetera/interfaz_80/tarjeta', {
+            const res = await axios.post('http://35.203.57.92:3001/billetera/interfaz_80/tarjeta', {
                 id_chofer: this.state.id_chofer
             }); //Se requiere enviar las variables requeridas por el WS en formato JSON
 

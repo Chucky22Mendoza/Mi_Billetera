@@ -61,7 +61,7 @@ export default class ReferPassangerScreen extends React.Component {
      */
     principal_body = async () => {
         try{
-            const res = await axios.get('http://35.203.42.33:3001/codigo_usuario');
+            const res = await axios.get('http://35.203.57.92:3001/codigo_usuario');
             if(res.status == 200){
                 let code = res.data;
                 this.setState({
